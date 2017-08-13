@@ -22,6 +22,14 @@ public class LoginForm extends javax.swing.JFrame {
     /**
      * Creates new form LoginForm
      */
+    public static User user;
+
+    public static User getUser() {
+        return user;
+    }
+     public User setUser(User user) {
+        return user;
+    }
     public LoginForm() {
         initComponents();
     }
@@ -158,12 +166,15 @@ public class LoginForm extends javax.swing.JFrame {
         
        else 
        {
-           User user = new User();
+           user = new User();
+           
            user.setUserName(txt_userName.getText());
            user.setPassword(txt_password.getText());
+           this.setUser(user);
            LoginService service  = new LoginService();
            if(service.checkUser(user))
            {
+              
               System.out.println("User found welcome to user : " + user.getUserName());
               WelcomeForm welcomeForm = new WelcomeForm(user);
               welcomeForm.setVisible(true);

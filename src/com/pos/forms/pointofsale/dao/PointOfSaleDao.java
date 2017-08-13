@@ -6,6 +6,8 @@
 package com.pos.forms.pointofsale.dao;
 
 import com.pos.beans.Products;
+import com.pos.beans.SaleDetail;
+import com.pos.beans.Sales;
 import java.util.List;
 
 /**
@@ -16,5 +18,9 @@ public abstract class PointOfSaleDao {
 public abstract List<Products> fetchProductsList();
 
 public abstract Long calculateSaleId() ;
+
+public abstract boolean performSale(Sales sale);
+public abstract int[] performSaleDetailInsert(Sales sale,List<SaleDetail> listOfSaleDetail);
+
     
 }

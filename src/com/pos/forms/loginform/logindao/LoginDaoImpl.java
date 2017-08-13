@@ -18,7 +18,7 @@ import java.sql.ResultSet;
  */
 public class LoginDaoImpl extends LoginDao{
 
-    private static final String USER_LOGIN_QUERY =  "select user_name, user_password from users where user_name= ? and user_password= ? ";
+    private static final String USER_LOGIN_QUERY =  "select user_name, user_password, user_id from users where user_name= ? and user_password= ? ";
     @Override
     public boolean checkUser(User user) {
         Connection con = null;
@@ -33,6 +33,7 @@ public class LoginDaoImpl extends LoginDao{
             rs = ps.executeQuery();
             if (rs.next()) // found
             {
+                user.setId(Long.parseLong(rs.getString("user_id")));      // to use user_id it in sale insert
                 System.out.println("User found : " + rs.getString("user_name"));
                 return true;
             }

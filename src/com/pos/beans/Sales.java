@@ -9,7 +9,7 @@ public class Sales {
 	private Long saleId;
 	private Customer customer; 				// customer_id int(11)
 	private Date transactionDate; 			// transaction_date date
-	private Long amountPaid; 				// amount_paid int(11)
+	private Double amountPaid; 				// amount_paid int(11)
 	private int paidStatus; 				// paid_status tinyint(1)
 	private User user; 						// user_id int(11)
 	private Integer amountToBePaid;				//amount_to_be_paid(11)
@@ -42,11 +42,11 @@ public class Sales {
 	}
 
 	
-	public Long getAmountPaid() {
+	public Double getAmountPaid() {
 		return amountPaid;
 	}
 
-	public void setAmountPaid(Long amountPaid) {
+	public void setAmountPaid(Double amountPaid) {
 		this.amountPaid = amountPaid;
 	}
 

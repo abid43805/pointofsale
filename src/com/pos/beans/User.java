@@ -83,4 +83,9 @@ public class User {
 		this.last_successful_login = last_successful_login;
 	}
 
+    @Override
+    public String toString() {
+        return "user name : "+ userName  + "password : " + password; 
+    }
+ 
 }

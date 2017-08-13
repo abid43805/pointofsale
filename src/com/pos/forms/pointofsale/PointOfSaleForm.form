@@ -258,7 +258,7 @@
                       <Component id="txt_AmountPaid" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
-                  <Component id="btn_AddToDetail1" min="-2" max="-2" attributes="0"/>
+                  <Component id="btn_SaleCommit" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -282,7 +282,7 @@
                           <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="txt_AmountChange" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <Component id="btn_AddToDetail1" alignment="0" min="-2" pref="37" max="-2" attributes="0"/>
+                      <Component id="btn_SaleCommit" alignment="0" min="-2" pref="37" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="130" max="32767" attributes="0"/>
               </Group>
@@ -317,12 +317,12 @@
             <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txt_AmountPaidFocusLost"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="btn_AddToDetail1">
+        <Component class="javax.swing.JButton" name="btn_SaleCommit">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Add To Cart"/>
+            <Property name="text" type="java.lang.String" value="Commit"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_AddToDetail1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_SaleCommitActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

@@ -6,8 +6,10 @@
 package com.pos.forms.pointofsale.service;
 
 import com.pos.beans.Products;
+import com.pos.beans.Sales;
 import com.pos.forms.pointofsale.dao.PointOfSaleDao;
 import com.pos.forms.pointofsale.dao.PointOfSaleDaoImpl;
+import com.sun.org.apache.xalan.internal.xsltc.runtime.BasisLibrary;
 import java.util.List;
 
 /**
@@ -26,4 +28,29 @@ public class PointOfSaleService {
       return posDao.calculateSaleId();
               
     }
+    
+    public boolean performSale(List listOfSaleDetail, Sales sale)
+    {
+      PointOfSaleDao posDao = new PointOfSaleDaoImpl();
+      boolean saleResult;
+      boolean saleDetailResult = false;
+      saleResult =  posDao.performSale(sale);
+      if(saleResult)
+      {
+        int[] resultOfSaleDetail= posDao.performSaleDetailInsert(sale, listOfSaleDetail);
+        if(resultOfSaleDetail!= null && resultOfSaleDetail.length>0)
+        {
+                saleDetailResult = true;
+        }
+      }
+     else
+       {
+           System.out.println("sale inserts failure inside service");
+       }
+      
+     return saleDetailResult;
+      
+    }
+
+  
 }

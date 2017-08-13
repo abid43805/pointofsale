@@ -8,11 +8,19 @@ package com.pos.forms.pointofsale;
 import com.pos.beans.Customer;
 import com.pos.beans.Products;
 import com.pos.beans.SaleDetail;
+import com.pos.beans.Sales;
+import com.pos.forms.loginform.LoginForm;
 import com.pos.forms.pointofsale.service.PointOfSaleService;
 import com.pos.forms.stocks.stocksservice.StocksService;
 import com.pos.utils.DBUtils;
+import com.sun.org.apache.xalan.internal.xsltc.runtime.BasisLibrary;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -21,7 +29,10 @@ import javax.swing.table.DefaultTableModel;
  */
 public class PointOfSaleForm extends javax.swing.JFrame {
     List<Products> listOfProducts;
+    Vector<Long> idsVectorOfProducts = new Vector<Long>();
     List<Customer> listOfCustomers;
+    Vector<Long> idsVectorOfCustomers = new Vector<Long>();
+    List<SaleDetail> listOfSaleDetail = new ArrayList<SaleDetail>();
     
     /**
      * Creates new form PointOfSaleForm
@@ -35,8 +46,8 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         
         initComponents();
         txt_SaleId.setText(""+(posService.calculateSaleId()+1));
-        DBUtils.addItemsToCombo(cmb_Products, listOfProducts, "Select Product");
-        DBUtils.addItemsToCombo(cmb_Customer, listOfCustomers, "Select Customer");
+        DBUtils.addItemsToCombo(cmb_Products, listOfProducts, "Select Product", idsVectorOfProducts);
+        DBUtils.addItemsToCombo(cmb_Customer, listOfCustomers, "Select Customer", idsVectorOfCustomers);
         
        
         
@@ -72,7 +83,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         txt_AmountDue = new javax.swing.JTextField();
         txt_AmountChange = new javax.swing.JTextField();
         txt_AmountPaid = new javax.swing.JTextField();
-        btn_AddToDetail1 = new javax.swing.JButton();
+        btn_SaleCommit = new javax.swing.JButton();
         pnl_SaleDetailPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_SaleDetail = new javax.swing.JTable();
@@ -208,10 +219,10 @@ public class PointOfSaleForm extends javax.swing.JFrame {
             }
         });
 
-        btn_AddToDetail1.setText("Add To Cart");
-        btn_AddToDetail1.addActionListener(new java.awt.event.ActionListener() {
+        btn_SaleCommit.setText("Commit");
+        btn_SaleCommit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_AddToDetail1ActionPerformed(evt);
+                btn_SaleCommitActionPerformed(evt);
             }
         });
 
@@ -231,7 +242,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
                     .addComponent(txt_AmountDue)
                     .addComponent(txt_AmountPaid))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btn_AddToDetail1)
+                .addComponent(btn_SaleCommit)
                 .addContainerGap())
         );
         pnl_PaymentPanelLayout.setVerticalGroup(
@@ -250,7 +261,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
                     .addGroup(pnl_PaymentPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel9)
                         .addComponent(txt_AmountChange, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btn_AddToDetail1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btn_SaleCommit, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(130, Short.MAX_VALUE))
         );
 
@@ -327,9 +338,16 @@ public class PointOfSaleForm extends javax.swing.JFrame {
             
             
             model.addRow(row);
-            //todo
-//            SaleDetail saleDetail = new SaleDetail(Long.parseLong(row[0].toString()), Long.MIN_VALUE, Long.MIN_VALUE, Long.MIN_VALUE);
-//            this.saleDetailList.add(new SaleDetail(row[0], ))
+            
+            Long saleId = Long.parseLong(txt_SaleId.getText());
+            Long productId = idsVectorOfProducts.get(cmb_Products.getSelectedIndex()-1);        //as selected index starts from 1
+            
+            Double price = Double.parseDouble(txt_Price.getText());
+            Long quantity = Long.parseLong(txt_Quantity.getText());
+            Double subTotal = Double.parseDouble(txt_SubTotal.getText());
+            
+            SaleDetail saleDetail = new SaleDetail(saleId, productId, price, quantity, subTotal);
+            this.listOfSaleDetail.add(saleDetail);
             
             Double amountDue = txt_AmountDue.getText().equals("")?0:Double.parseDouble(txt_AmountDue.getText()) ;
             txt_AmountDue.setText((amountDue + Double.parseDouble(txt_SubTotal.getText()))+"");
@@ -351,14 +369,36 @@ public class PointOfSaleForm extends javax.swing.JFrame {
        
     }//GEN-LAST:event_txt_QuantityActionPerformed
 
-    private void btn_AddToDetail1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_AddToDetail1ActionPerformed
+    private void btn_SaleCommitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SaleCommitActionPerformed
         PointOfSaleService posService = new PointOfSaleService();
-            
+         Sales sale = new Sales();
+         sale.setSaleId(Long.parseLong(txt_SaleId.getText()));    
+         Long customerId = idsVectorOfCustomers.get(cmb_Customer.getSelectedIndex());        //as selected index starts from 1
+         Customer customer = new Customer();
+         customer.setCustomerId(customerId);
+         sale.setCustomer(customer);
+         sale.setAmountPaid(Double.parseDouble(txt_AmountDue.getText()));
+         System.out.println("user : " + LoginForm.getUser());
+         sale.setUser(LoginForm.getUser());
         
-//        posService.performSale();     todo
-        txt_SaleId.setText(""+(posService.calculateSaleId()+1));
+        boolean result = posService.performSale(listOfSaleDetail, sale);     
+        if(result)
+        {
+            txt_SaleId.setText(""+(posService.calculateSaleId()+1));
+            txt_AmountDue.setText("");
+            txt_AmountPaid.setText("");
+            txt_AmountChange.setText("");
+            listOfSaleDetail.clear();
+            DBUtils.resetJTable(tbl_SaleDetail);
+            JOptionPane.showMessageDialog(pnl_SaleDetailPanel,"Sale commited successfully.");
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(pnl_SaleDetailPanel,"Some error occured while committing sale.");
+        }
         
-    }//GEN-LAST:event_btn_AddToDetail1ActionPerformed
+        
+    }//GEN-LAST:event_btn_SaleCommitActionPerformed
 
     private void cmb_ProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmb_ProductsActionPerformed
       int index =   cmb_Products.getSelectedIndex()-1;  //leave first item title 
@@ -432,7 +472,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_AddToDetail;
-    private javax.swing.JButton btn_AddToDetail1;
+    private javax.swing.JButton btn_SaleCommit;
     private javax.swing.JComboBox cmb_Customer;
     private javax.swing.JComboBox cmb_Products;
     private javax.swing.JLabel jLabel1;

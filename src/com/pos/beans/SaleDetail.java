@@ -5,7 +5,7 @@ package com.pos.beans;
 
 public class SaleDetail {
 
-    public SaleDetail(Long sale, Long product, Long productPrice, Long quantity, Long subTotal) {
+    public SaleDetail(Long sale, Long product, Double productPrice, Long quantity, Double subTotal) {
         this.sale = sale;
         this.product = product;
         this.productPrice = productPrice;
@@ -19,9 +19,9 @@ public class SaleDetail {
 	private Long sale;// sale_id int(11)
 
 	private Long product; // product_id int(11)
-	private Long productPrice; // product_price int(11)
+	private Double productPrice; // product_price int(11)
 	private Long quantity; // quantity int(11)
-	private Long subTotal; // sub_total int(11)
+	private Double subTotal; // sub_total int(11)
 
 
 	public Long getSaleDetailId() {
@@ -34,11 +34,11 @@ public class SaleDetail {
 
 
 	
-	public Long getProductPrice() {
+	public Double getProductPrice() {
 		return productPrice;
 	}
 
-	public void setProductPrice(Long productPrice) {
+	public void setProductPrice(Double productPrice) {
 		this.productPrice = productPrice;
 	}
 	
@@ -50,11 +50,11 @@ public class SaleDetail {
 		this.quantity = quantity;
 	}
 	
-	public Long getSubTotal() {
+	public Double getSubTotal() {
 		return subTotal;
 	}
 
-	public void setSubTotal(Long subTotal) {
+	public void setSubTotal(Double subTotal) {
 		this.subTotal = subTotal;
 	}
 
