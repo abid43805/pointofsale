@@ -96,5 +96,29 @@ public class DBUtils {
                 }
 
     }
+
+   
+
+    public static boolean checkValidInteger(String text) {
+       boolean result = false;
+       if(!text.isEmpty())
+       {
+           try { 
+            System.out.println("going to parse string to integer");
+            Integer.parseInt(text);
+            result = true;
+           }
+           catch(NumberFormatException e){
+            System.out.println("Exception in conversion string to integer : "+ e);
+           }
+        
+       }
+       else
+       {
+           System.out.println("String is empty to convert in integer");
+           return result;
+       }
+      return result;  
+    }
     
 }

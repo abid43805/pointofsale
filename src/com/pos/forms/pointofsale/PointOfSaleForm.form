@@ -199,6 +199,9 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_QuantityActionPerformed"/>
             <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txt_QuantityFocusLost"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.pos.utils.IntegerField();"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JTextField" name="txt_Price">
           <Properties>
@@ -306,8 +309,14 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txt_AmountDue">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txt_AmountChange">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txt_AmountChangeActionPerformed"/>
           </Events>
@@ -316,6 +325,9 @@
           <Events>
             <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txt_AmountPaidFocusLost"/>
           </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new com.pos.utils.IntegerField();"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JButton" name="btn_SaleCommit">
           <Properties>

@@ -71,7 +71,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         btn_AddToDetail = new javax.swing.JButton();
         txt_SaleId = new javax.swing.JTextField();
-        txt_Quantity = new javax.swing.JTextField();
+        txt_Quantity = new com.pos.utils.IntegerField();
         txt_Price = new javax.swing.JTextField();
         txt_SubTotal = new javax.swing.JTextField();
         cmb_Customer = new javax.swing.JComboBox();
@@ -82,7 +82,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         txt_AmountDue = new javax.swing.JTextField();
         txt_AmountChange = new javax.swing.JTextField();
-        txt_AmountPaid = new javax.swing.JTextField();
+        txt_AmountPaid = new com.pos.utils.IntegerField();
         btn_SaleCommit = new javax.swing.JButton();
         pnl_SaleDetailPanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -207,6 +207,9 @@ public class PointOfSaleForm extends javax.swing.JFrame {
 
         jLabel9.setText("Amount Change :");
 
+        txt_AmountDue.setEditable(false);
+
+        txt_AmountChange.setEditable(false);
         txt_AmountChange.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_AmountChangeActionPerformed(evt);
@@ -331,9 +334,33 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         Object[] row = new Object[5];
         
             row[0] = txt_SaleId.getText();
-            row[1] = cmb_Products.getSelectedItem();
+             
+            if(cmb_Products.getSelectedIndex() != 0)
+            {
+                row[1] = cmb_Products.getSelectedItem();
+            }
+            else
+            {
+             JOptionPane.showMessageDialog(pnl_SaleDetailPanel,"Please select a valid product.");   
+             cmb_Products.requestFocus();
+             return;
+            }
             row[2] = txt_Price.getText();
-            row[3] = txt_Quantity.getText();
+            
+                
+            boolean validInteger = DBUtils.checkValidInteger(txt_Quantity.getText());
+            if(validInteger)
+            {
+                row[3] = txt_Quantity.getText();
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(pnl_SaleDetailPanel,"Please enter a valid quantity in numbers.");   
+                txt_Quantity.requestFocus();
+                return;   
+            }
+          
+            
             row[4] = txt_SubTotal.getText();
             
             
@@ -419,9 +446,19 @@ public class PointOfSaleForm extends javax.swing.JFrame {
     private void txt_QuantityFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_QuantityFocusLost
         // TODO add your handling code here:
  // TODO add your handling code here:
-       Double price = Double.parseDouble(txt_Price.getText());
-       Long quantity = Long.parseLong(txt_Quantity.getText());
-       txt_SubTotal.setText((quantity * price)+"");        
+       
+       if(!txt_Quantity.getText().isEmpty())
+       {
+        Long quantity = Long.parseLong(txt_Quantity.getText());
+        Double price = Double.parseDouble(txt_Price.getText());
+        txt_SubTotal.setText((quantity * price)+"");        
+       }
+       else
+       {
+           txt_SubTotal.setText("0");
+       }
+       
+       
         
     }//GEN-LAST:event_txt_QuantityFocusLost
 
