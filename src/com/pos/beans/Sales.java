@@ -12,7 +12,7 @@ public class Sales {
 	private Double amountPaid; 				// amount_paid int(11)
 	private int paidStatus; 				// paid_status tinyint(1)
 	private User user; 						// user_id int(11)
-	private Integer amountToBePaid;				//amount_to_be_paid(11)
+	private Double amountToBePaid;				//amount_to_be_paid(11)
 
 
 	public Long getSaleId() {
@@ -69,11 +69,11 @@ public class Sales {
 	}
 
 	
-	public Integer getAmountToBePaid() {
+	public Double getAmountToBePaid() {
 		return amountToBePaid;
 	}
 
-	public void setAmountToBePaid(Integer amountToBePaid) {
+	public void setAmountToBePaid(Double amountToBePaid) {
 		this.amountToBePaid = amountToBePaid;
 	}
 

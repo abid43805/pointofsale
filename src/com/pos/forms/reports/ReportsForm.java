@@ -5,12 +5,18 @@
  */
 package com.pos.forms.reports;
 
+import com.pos.beans.Sales;
+import com.pos.forms.reports.reportservice.ReportService;
+import java.util.Date;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author AbidAli
  */
 public class ReportsForm extends javax.swing.JFrame {
-
+    List<Sales> listOfSales;
     /**
      * Creates new form ReportsForm
      */
@@ -31,10 +37,10 @@ public class ReportsForm extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tbl_sales = new javax.swing.JTable();
         btn_Search = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
+        date_StartDate = new com.toedter.calendar.JDateChooser();
+        date_EndDate = new com.toedter.calendar.JDateChooser();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -47,60 +53,58 @@ public class ReportsForm extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel2.setText("End Date :");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tbl_sales.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+
             },
             new String [] {
-                "Transaction ID", "Customer", "Date", "Amount", "Paid Status", "Action"
+                "Transaction ID", "User", "Date", "Amount", "Paid Status", "Customer", "Action"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tbl_sales);
 
         btn_Search.setText("Search");
+        btn_Search.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_SearchActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnl_ReportsLayout = new javax.swing.GroupLayout(pnl_Reports);
         pnl_Reports.setLayout(pnl_ReportsLayout);
         pnl_ReportsLayout.setHorizontalGroup(
             pnl_ReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_ReportsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE)
+                .addContainerGap())
             .addGroup(pnl_ReportsLayout.createSequentialGroup()
                 .addGap(59, 59, 59)
                 .addGroup(pnl_ReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(35, 35, 35)
+                .addGap(18, 18, 18)
                 .addGroup(pnl_ReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnl_ReportsLayout.createSequentialGroup()
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addComponent(date_EndDate, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(7, 7, 7)
                         .addComponent(btn_Search))
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(date_StartDate, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_ReportsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 767, Short.MAX_VALUE)
-                .addContainerGap())
         );
         pnl_ReportsLayout.setVerticalGroup(
             pnl_ReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnl_ReportsLayout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addGroup(pnl_ReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGap(27, 27, 27)
+                .addGroup(pnl_ReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel1)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(pnl_ReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnl_ReportsLayout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addComponent(jLabel2))
-                    .addGroup(pnl_ReportsLayout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(pnl_ReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btn_Search))))
+                    .addComponent(date_StartDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addGroup(pnl_ReportsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(date_EndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btn_Search)
+                    .addComponent(jLabel2))
+                .addGap(21, 21, 21)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 436, Short.MAX_VALUE))
         );
 
@@ -123,6 +127,38 @@ public class ReportsForm extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btn_SearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SearchActionPerformed
+        System.out.println("going to fetch sale report.");
+        Date jud =  date_StartDate.getDate();
+        long t1 = jud.getTime();
+        java.sql.Date sqdStartDate = new java.sql.Date(t1);     //for db operation date java.sql.date
+        System.err.println("start date: "+ sqdStartDate);
+        Date jud2 =  date_EndDate.getDate();
+        long t2 = jud2.getTime();
+        java.sql.Date sqdEndDate = new java.sql.Date(t2);
+        System.out.println("start date: "+ sqdEndDate);
+        ReportService service = new ReportService();
+        listOfSales =  service.reportfetchSalesReport(sqdStartDate, sqdEndDate);                                            //rs.updateDate("edate", sqd);
+          DefaultTableModel model = (DefaultTableModel)tbl_sales.getModel();
+        // clear jtable content
+        model.setRowCount(0);
+        Object[] row = new Object[6];
+        for(int i = 0; i < listOfSales.size(); i++)
+        {
+            row[0] = listOfSales.get(i).getSaleId();
+            row[1] = listOfSales.get(i).getUser().getUserName();
+            
+            System.out.println("start date: "+ listOfSales.get(i).getTransactionDate());
+            row[2] = listOfSales.get(i).getTransactionDate();
+            
+            row[3] = listOfSales.get(i).getAmountPaid();
+            row[4] = listOfSales.get(i).getPaidStatus();
+            row[5] = listOfSales.get(i).getCustomer().getCustomerName();
+            
+            model.addRow(row);
+        }
+    }//GEN-LAST:event_btn_SearchActionPerformed
 
     /**
      * @param args the command line arguments
@@ -161,12 +197,12 @@ public class ReportsForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_Search;
+    private com.toedter.calendar.JDateChooser date_EndDate;
+    private com.toedter.calendar.JDateChooser date_StartDate;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.JPanel pnl_Reports;
+    private javax.swing.JTable tbl_sales;
     // End of variables declaration//GEN-END:variables
 }
