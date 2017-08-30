@@ -7,8 +7,15 @@ package com.pos.forms.reports;
 
 import com.pos.beans.Sales;
 import com.pos.forms.reports.reportservice.ReportService;
+import com.pos.utils.ButtonColumn;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.Date;
 import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -63,6 +70,7 @@ public class ReportsForm extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tbl_sales);
 
+        btn_Search.setMnemonic('K');
         btn_Search.setText("Search");
         btn_Search.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -137,24 +145,42 @@ public class ReportsForm extends javax.swing.JFrame {
         Date jud2 =  date_EndDate.getDate();
         long t2 = jud2.getTime();
         java.sql.Date sqdEndDate = new java.sql.Date(t2);
-        System.out.println("start date: "+ sqdEndDate);
+        System.out.println("end date: "+ sqdEndDate);
         ReportService service = new ReportService();
         listOfSales =  service.reportfetchSalesReport(sqdStartDate, sqdEndDate);                                            //rs.updateDate("edate", sqd);
           DefaultTableModel model = (DefaultTableModel)tbl_sales.getModel();
         // clear jtable content
         model.setRowCount(0);
-        Object[] row = new Object[6];
+        Object[] row = new Object[7];
         for(int i = 0; i < listOfSales.size(); i++)
         {
             row[0] = listOfSales.get(i).getSaleId();
             row[1] = listOfSales.get(i).getUser().getUserName();
             
-            System.out.println("start date: "+ listOfSales.get(i).getTransactionDate());
+            System.out.println("fetched transaction date: "+ listOfSales.get(i).getTransactionDate());
             row[2] = listOfSales.get(i).getTransactionDate();
             
             row[3] = listOfSales.get(i).getAmountPaid();
             row[4] = listOfSales.get(i).getPaidStatus();
             row[5] = listOfSales.get(i).getCustomer().getCustomerName();
+            row[6] = "Detail";
+            
+            
+           Action saleDetail = new AbstractAction()
+                {
+                    public void actionPerformed(ActionEvent e)
+                        {
+                               JTable table = (JTable)e.getSource();
+                               int modelRow = Integer.valueOf( e.getActionCommand() );
+                               ((DefaultTableModel)table.getModel()).removeRow(modelRow);   //for deleting row from table
+                               
+                         }
+                };
+ 
+            ButtonColumn buttonColumn = new ButtonColumn(tbl_sales, saleDetail, 6);
+            buttonColumn.setMnemonic(KeyEvent.VK_D);
+            
+            
             
             model.addRow(row);
         }

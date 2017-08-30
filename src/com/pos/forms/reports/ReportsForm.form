@@ -193,6 +193,7 @@
         </Container>
         <Component class="javax.swing.JButton" name="btn_Search">
           <Properties>
+            <Property name="mnemonic" type="int" value="75"/>
             <Property name="text" type="java.lang.String" value="Search"/>
           </Properties>
           <Events>
