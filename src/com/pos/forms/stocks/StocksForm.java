@@ -6,6 +6,7 @@
 package com.pos.forms.stocks;
 
 import com.pos.beans.Customer;
+import com.pos.beans.Supplier;
 import com.pos.beans.User;
 import com.pos.forms.loginform.loginservice.LoginService;
 import com.pos.forms.stocks.stocksservice.StocksService;
@@ -13,7 +14,11 @@ import com.pos.forms.welcome.WelcomeForm;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.RowFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableRowSorter;
 
 /**
  *
@@ -21,12 +26,18 @@ import javax.swing.table.DefaultTableModel;
  */
 public class StocksForm extends javax.swing.JFrame {
     List<Customer> listOfCustomers;
+    List<Supplier> listOfSuppliers;
+    private TableRowSorter sorter;
+    private TableRowSorter sorterCustomer;
+    
     /**
      * Creates new form StocksForm
      */
     public StocksForm() {
         initComponents();
         showCustomersInTable();
+        showSuppliersInTable();
+        addDocumentListnerForSearchFields();
     }
 
     /**
@@ -38,9 +49,27 @@ public class StocksForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        tab_Customers = new javax.swing.JTabbedPane();
+        tab_Stocks = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        txt_SupplierId = new javax.swing.JTextField();
+        txt_SupplierName = new javax.swing.JTextField();
+        txt_SupplierMobileNo = new javax.swing.JTextField();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tbl_Suppliers = new javax.swing.JTable();
+        btn_SupplierInsert = new javax.swing.JButton();
+        btn_SupplierUpdate = new javax.swing.JButton();
+        btn_SupplierDelete = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        txt_SupplierAddress = new javax.swing.JTextArea();
+        btn_Reset = new javax.swing.JButton();
+        txt_SearchField = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -58,6 +87,9 @@ public class StocksForm extends javax.swing.JFrame {
         btn_CustomerDelete = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         txt_CustomerAddress = new javax.swing.JTextArea();
+        btn_ResetCustomers = new javax.swing.JButton();
+        txt_SearchCustomer = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -69,23 +101,169 @@ public class StocksForm extends javax.swing.JFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 552, Short.MAX_VALUE)
+            .addGap(0, 589, Short.MAX_VALUE)
         );
 
-        tab_Customers.addTab("Products", jPanel1);
+        tab_Stocks.addTab("Products", jPanel1);
+
+        jLabel6.setText("ID :");
+
+        jLabel7.setText("Name :");
+
+        jLabel9.setText("Mobile No. :");
+
+        jLabel10.setText("Address :");
+
+        txt_SupplierId.setEditable(false);
+
+        txt_SupplierName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_SupplierNameActionPerformed(evt);
+            }
+        });
+
+        tbl_Suppliers.setAutoCreateRowSorter(true);
+        tbl_Suppliers.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Name", "Mobile No.", "Address"
+            }
+        ));
+        tbl_Suppliers.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_SuppliersMouseClicked(evt);
+            }
+        });
+        sorter = new TableRowSorter<>(tbl_Suppliers.getModel());
+        tbl_Suppliers.setRowSorter(sorter);
+        jScrollPane3.setViewportView(tbl_Suppliers);
+
+        btn_SupplierInsert.setText("Insert");
+        btn_SupplierInsert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_SupplierInsertActionPerformed(evt);
+            }
+        });
+
+        btn_SupplierUpdate.setText("Update");
+        btn_SupplierUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_SupplierUpdateActionPerformed(evt);
+            }
+        });
+
+        btn_SupplierDelete.setText("Delete");
+        btn_SupplierDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_SupplierDeleteActionPerformed(evt);
+            }
+        });
+
+        txt_SupplierAddress.setColumns(20);
+        txt_SupplierAddress.setRows(5);
+        jScrollPane4.setViewportView(txt_SupplierAddress);
+
+        btn_Reset.setText("Reset");
+        btn_Reset.setToolTipText("");
+        btn_Reset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ResetActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap(21, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel6))
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txt_SupplierName, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                            .addComponent(txt_SupplierMobileNo)
+                            .addComponent(txt_SupplierId)
+                            .addComponent(jScrollPane4)))
+                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(btn_Reset, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(jPanel4Layout.createSequentialGroup()
+                            .addComponent(btn_SupplierInsert, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGap(18, 18, 18)
+                            .addComponent(btn_SupplierUpdate)
+                            .addGap(18, 18, 18)
+                            .addComponent(btn_SupplierDelete))))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 520, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(txt_SupplierId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel7)
+                            .addComponent(txt_SupplierName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9)
+                            .addComponent(txt_SupplierMobileNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_Reset)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btn_SupplierInsert)
+                            .addComponent(btn_SupplierUpdate)
+                            .addComponent(btn_SupplierDelete)))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(237, 237, 237))
+        );
+
+        jLabel8.setText("Search :");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 824, Short.MAX_VALUE)
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_SearchField, javax.swing.GroupLayout.PREFERRED_SIZE, 478, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 552, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(txt_SearchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        tab_Customers.addTab("Suppliers", jPanel2);
+        tab_Stocks.addTab("Suppliers", jPanel2);
 
         jLabel1.setText("ID :");
 
@@ -93,18 +271,31 @@ public class StocksForm extends javax.swing.JFrame {
 
         jLabel3.setText("CNIC :");
 
-        jLabel4.setText("Mobile No. :");
+        jLabel4.setText("Phone :");
 
         jLabel5.setText("Address :");
 
         txt_CustomerId.setEditable(false);
 
+        txt_CustomerCnic.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_CustomerCnicActionPerformed(evt);
+            }
+        });
+
+        txt_CustomerMobileNo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_CustomerMobileNoActionPerformed(evt);
+            }
+        });
+
+        tbl_Customers.setAutoCreateRowSorter(true);
         tbl_Customers.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "ID", "Name", "CNIC", "Mobile No.", "Address"
+                "ID", "Name", "CNIC", "Phone", "Address"
             }
         ));
         tbl_Customers.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -112,6 +303,8 @@ public class StocksForm extends javax.swing.JFrame {
                 tbl_CustomersMouseClicked(evt);
             }
         });
+        sorterCustomer = new TableRowSorter<>(tbl_Customers.getModel());
+        tbl_Customers.setRowSorter(sorterCustomer);
         jScrollPane1.setViewportView(tbl_Customers);
 
         btn_CustomerInsert.setText("Insert");
@@ -139,72 +332,112 @@ public class StocksForm extends javax.swing.JFrame {
         txt_CustomerAddress.setRows(5);
         jScrollPane2.setViewportView(txt_CustomerAddress);
 
+        btn_ResetCustomers.setText("Reset");
+        btn_ResetCustomers.setToolTipText("");
+        btn_ResetCustomers.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ResetCustomersActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setText("Search :");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap(21, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1))
-                        .addGap(30, 30, 30)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txt_CustomerName, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
-                            .addComponent(txt_CustomerCnic)
-                            .addComponent(txt_CustomerMobileNo)
-                            .addComponent(txt_CustomerId)
-                            .addComponent(jScrollPane2)))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(btn_CustomerInsert)
+                                .addGap(18, 18, 18)
+                                .addComponent(btn_CustomerUpdate)
+                                .addGap(18, 18, 18)
+                                .addComponent(btn_CustomerDelete)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addGap(12, 12, 12)
+                                        .addComponent(jLabel4))
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addContainerGap()
+                                        .addComponent(jLabel5)))
+                                .addGap(11, 11, 11)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txt_CustomerMobileNo)
+                                    .addComponent(jScrollPane2)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                                .addGap(16, 16, 16)
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(txt_CustomerName))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addGap(30, 30, 30)
+                                        .addComponent(txt_CustomerId))
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txt_CustomerCnic)))))
+                        .addGap(18, 18, 18))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(btn_CustomerInsert)
-                        .addGap(18, 18, 18)
-                        .addComponent(btn_CustomerUpdate)
-                        .addGap(18, 18, 18)
-                        .addComponent(btn_CustomerDelete)))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 520, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                        .addContainerGap()
+                        .addComponent(btn_ResetCustomers, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 520, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_SearchCustomer)))
+                .addGap(12, 12, 12))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(txt_CustomerId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11)
+                    .addComponent(txt_SearchCustomer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(txt_CustomerId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
                             .addComponent(txt_CustomerName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(15, 15, 15)
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txt_CustomerCnic, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
-                        .addGap(24, 24, 24)
+                        .addGap(21, 21, 21)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
                             .addComponent(txt_CustomerMobileNo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_ResetCustomers)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(btn_CustomerInsert)
                             .addComponent(btn_CustomerUpdate)
                             .addComponent(btn_CustomerDelete)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(237, 237, 237))
+                .addContainerGap())
         );
 
-        tab_Customers.addTab("Customers", jPanel3);
+        tab_Stocks.addTab("Customers", jPanel3);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -212,14 +445,14 @@ public class StocksForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tab_Customers))
+                .addComponent(tab_Stocks))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tab_Customers)
+            .addComponent(tab_Stocks)
         );
 
-        tab_Customers.getAccessibleContext().setAccessibleName("Customers");
+        tab_Stocks.getAccessibleContext().setAccessibleName("Customers");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -228,7 +461,7 @@ public class StocksForm extends javax.swing.JFrame {
 
         if(txt_CustomerName.getText().equals(""))
         {
-            JOptionPane.showMessageDialog(tab_Customers,"Invalid Customer Name");
+            JOptionPane.showMessageDialog(tab_Stocks,"Invalid Customer Name");
 
         }
         
@@ -245,13 +478,13 @@ public class StocksForm extends javax.swing.JFrame {
            {
               System.out.println("customer inserted succefully : " + customer.getCustomerName());
               showCustomersInTable();
-              JOptionPane.showMessageDialog(tab_Customers,"Customer Inserted Successfully .");
+              JOptionPane.showMessageDialog(tab_Stocks,"Customer Inserted Successfully .");
               clearCustomerFormFields();
                          
            }
            else
            {
-                JOptionPane.showMessageDialog(tab_Customers,"Customer Insertion Failed.");
+                JOptionPane.showMessageDialog(tab_Stocks,"Customer Insertion Failed.");
                 clearCustomerFormFields();
            }
            
@@ -262,7 +495,8 @@ public class StocksForm extends javax.swing.JFrame {
 
     private void tbl_CustomersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_CustomersMouseClicked
         int index = tbl_Customers.getSelectedRow();
-        showCustomerInFormFields(index);
+        String custId = tbl_Customers.getModel().getValueAt(tbl_Customers.convertRowIndexToModel(index),0).toString();
+        showCustomerInFormFields(custId);
     }//GEN-LAST:event_tbl_CustomersMouseClicked
 
     private void btn_CustomerUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_CustomerUpdateActionPerformed
@@ -271,7 +505,7 @@ public class StocksForm extends javax.swing.JFrame {
         
         if(txt_CustomerName.getText().equals(""))
         {
-            JOptionPane.showMessageDialog(tab_Customers,"Invalid Customer Name");
+            JOptionPane.showMessageDialog(tab_Stocks,"Invalid Customer Name");
 
         }
         
@@ -289,13 +523,13 @@ public class StocksForm extends javax.swing.JFrame {
            {
               System.out.println("customer updated succefully : " + customer.getCustomerName());
               showCustomersInTable();
-              JOptionPane.showMessageDialog(tab_Customers,"Customer updated Successfully .");
+              JOptionPane.showMessageDialog(tab_Stocks,"Customer updated Successfully .");
               clearCustomerFormFields();
                          
            }
            else
            {
-                JOptionPane.showMessageDialog(tab_Customers,"Customer updation Failed.");
+                JOptionPane.showMessageDialog(tab_Stocks,"Customer updation Failed.");
                 clearCustomerFormFields();
            }
            
@@ -305,11 +539,11 @@ public class StocksForm extends javax.swing.JFrame {
 
     private void btn_CustomerDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_CustomerDeleteActionPerformed
         int index = tbl_Customers.getSelectedRow();
-
-        showCustomerInFormFields(index);
-
         if(index >=0)
         {
+            String custId = tbl_Customers.getModel().getValueAt(tbl_Customers.convertRowIndexToModel(index),0).toString();
+            showCustomerInFormFields(custId);
+
             Customer customer = new Customer();
             customer.setCustomerId(Long.parseLong(txt_CustomerId.getText()));
             StocksService service  = new StocksService();
@@ -318,16 +552,149 @@ public class StocksForm extends javax.swing.JFrame {
                 System.out.println("customer deleted succefully : " + customer.getCustomerId());
                 showCustomersInTable();
                 clearCustomerFormFields();
-                JOptionPane.showMessageDialog(tab_Customers,"Customer deleted Successfully .");
+                JOptionPane.showMessageDialog(tab_Stocks,"Customer deleted Successfully .");
 
             }
             else
             {
-                JOptionPane.showMessageDialog(tab_Customers,"Customer deletion Failed.");
+                JOptionPane.showMessageDialog(tab_Stocks,"Customer deletion Failed.");
                 clearCustomerFormFields();
             }
         }
     }//GEN-LAST:event_btn_CustomerDeleteActionPerformed
+
+    private void tbl_SuppliersMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_SuppliersMouseClicked
+        // TODO add your handling code here:
+        int index = tbl_Suppliers.getSelectedRow();
+        String supplierId = tbl_Suppliers.getModel().getValueAt(tbl_Suppliers.convertRowIndexToModel(index),0).toString();
+        showSupplierInFormFields(supplierId);
+        
+    }//GEN-LAST:event_tbl_SuppliersMouseClicked
+
+    private void btn_SupplierInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SupplierInsertActionPerformed
+        // TODO add your handling code here:
+        
+        if(txt_SupplierName.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(tab_Stocks,"Invalid Supplier Name");
+
+        }
+        
+         else
+         {
+        
+           Supplier supplier = new Supplier();
+           supplier.setSupplierName(txt_SupplierName.getText());
+           supplier.setSupplierAddress(txt_SupplierAddress.getText());
+           supplier.setSupplierContactNo(txt_SupplierMobileNo.getText());
+           StocksService service  = new StocksService();
+           if(service.insertSupplier(supplier))
+           {
+              System.out.println("supplier inserted succefully : " + supplier.getSupplierName());
+              showSuppliersInTable();
+              JOptionPane.showMessageDialog(tab_Stocks,"Supplier Inserted Successfully .");
+              clearSupplierFormFields();
+                         
+           }
+           else
+           {
+                JOptionPane.showMessageDialog(tab_Stocks,"Supplier Insertion Failed.");
+                clearSupplierFormFields();
+           }
+           
+         }
+    }//GEN-LAST:event_btn_SupplierInsertActionPerformed
+
+    private void btn_SupplierUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SupplierUpdateActionPerformed
+        // TODO add your handling code here:
+        if(!txt_SupplierId.getText().equals(""))
+      {
+        
+        if(txt_SupplierName.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(tab_Stocks,"Invalid Supplier Name");
+
+        }
+        
+         else
+         {
+        
+           Supplier supplier = new Supplier();
+           supplier.setSupplierId(Long.parseLong(txt_SupplierId.getText()));
+           supplier.setSupplierName(txt_SupplierName.getText());
+           supplier.setSupplierAddress(txt_SupplierAddress.getText());
+           supplier.setSupplierContactNo(txt_SupplierMobileNo.getText());
+           StocksService service  = new StocksService();
+           if(service.updateSupplier(supplier))
+           {
+              System.out.println("supplier updated succefully : " + supplier.getSupplierName());
+              showSuppliersInTable();
+              JOptionPane.showMessageDialog(tab_Stocks,"Supplier updated successfuly.");
+              clearSupplierFormFields();
+                         
+           }
+           else
+           {
+                JOptionPane.showMessageDialog(tab_Stocks,"Supplier updation Failed.");
+                clearSupplierFormFields();
+           }
+           
+         }
+      }
+    }//GEN-LAST:event_btn_SupplierUpdateActionPerformed
+
+    private void btn_SupplierDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SupplierDeleteActionPerformed
+        // TODO add your handling code here:
+         
+        int index = tbl_Suppliers.getSelectedRow();
+        
+        if(index >=0)
+        {
+            String supplierId = tbl_Suppliers.getModel().getValueAt(tbl_Suppliers.convertRowIndexToModel(index),0).toString();
+            showSupplierInFormFields(supplierId);
+
+            Supplier supplier = new Supplier();
+            supplier.setSupplierId(Long.parseLong(txt_SupplierId.getText()));
+            StocksService service  = new StocksService();
+            if(service.deleteSupplier(supplier))
+            {
+                System.out.println("supplier deleted succefully : " + supplier.getSupplierId());
+                showSuppliersInTable();
+                clearSupplierFormFields();
+                JOptionPane.showMessageDialog(tab_Stocks,"Supplier deleted Successfully .");
+
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(tab_Stocks,"Supplier deletion Failed.");
+                clearSupplierFormFields();
+            }
+        }
+    }//GEN-LAST:event_btn_SupplierDeleteActionPerformed
+
+    private void txt_SupplierNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_SupplierNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_SupplierNameActionPerformed
+
+    private void btn_ResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ResetActionPerformed
+        // TODO add your handling code here:
+        clearSupplierFormFields();
+        tbl_Suppliers.clearSelection();
+    }//GEN-LAST:event_btn_ResetActionPerformed
+
+    private void btn_ResetCustomersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ResetCustomersActionPerformed
+        // TODO add your handling code here:
+        clearCustomerFormFields();
+        tbl_Customers.clearSelection();
+    }//GEN-LAST:event_btn_ResetCustomersActionPerformed
+
+    private void txt_CustomerCnicActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_CustomerCnicActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_CustomerCnicActionPerformed
+
+    private void txt_CustomerMobileNoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_CustomerMobileNoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_CustomerMobileNoActionPerformed
 private void clearCustomerFormFields() {
         
                 txt_CustomerId.setText("");
@@ -335,8 +702,16 @@ private void clearCustomerFormFields() {
                 txt_CustomerCnic.setText("");
                 txt_CustomerMobileNo.setText("");
                 txt_CustomerName.setText("");
+                txt_SearchCustomer.setText("");
     }
-
+private void clearSupplierFormFields() {
+        
+                txt_SupplierId.setText("");
+                txt_SupplierAddress.setText("");
+                txt_SupplierMobileNo.setText("");
+                txt_SupplierName.setText("");
+                txt_SearchField.setText("");
+    }
   public void showCustomersInTable()
     {
         StocksService service  = new StocksService();
@@ -357,15 +732,48 @@ private void clearCustomerFormFields() {
             model.addRow(row);
         }
     }
-    private void showCustomerInFormFields(int index) {
-               
-        if(index >= 0)
+  public void showSuppliersInTable()
+    {
+        StocksService service  = new StocksService();
+        listOfSuppliers = service.fetchSupplierList();
+        DefaultTableModel model = (DefaultTableModel)tbl_Suppliers.getModel();
+        // clear jtable content
+        model.setRowCount(0);
+        Object[] row = new Object[5];
+        for(int i = 0; i < listOfSuppliers.size(); i++)
         {
-            txt_CustomerId.setText(listOfCustomers.get(index).getCustomerId()+ "");
-            txt_CustomerCnic.setText(listOfCustomers.get(index).getCnic());
-            txt_CustomerMobileNo.setText(listOfCustomers.get(index).getMobileNo());
-            txt_CustomerName.setText(listOfCustomers.get(index).getCustomerName());
-            txt_CustomerAddress.setText(listOfCustomers.get(index).getAddress());
+            row[0] = listOfSuppliers.get(i).getSupplierId();
+            row[1] = listOfSuppliers.get(i).getSupplierName();
+            row[2] = listOfSuppliers.get(i).getSupplierContactNo();
+            row[3] = listOfSuppliers.get(i).getSupplierAddress();
+            
+            
+            model.addRow(row);
+        }
+    }
+    private void showCustomerInFormFields(String customerId) {
+               
+         if(customerId != null && !"".equals(customerId) )
+        {
+            Customer cust = new Customer();
+            cust.setCustomerId(Long.parseLong(customerId));
+            txt_CustomerId.setText(listOfCustomers.get(listOfCustomers.indexOf(cust)).getCustomerId()+ "");
+            txt_CustomerCnic.setText(listOfCustomers.get(listOfCustomers.indexOf(cust)).getCnic());
+            txt_CustomerMobileNo.setText(listOfCustomers.get(listOfCustomers.indexOf(cust)).getMobileNo());
+            txt_CustomerName.setText(listOfCustomers.get(listOfCustomers.indexOf(cust)).getCustomerName());
+            txt_CustomerAddress.setText(listOfCustomers.get(listOfCustomers.indexOf(cust)).getAddress());
+        }
+    }
+    private void showSupplierInFormFields(String suppId) {
+               
+        if(suppId != null && !"".equals(suppId) )
+        {
+            Supplier supp = new Supplier();
+            supp.setSupplierId(Long.parseLong(suppId));
+            txt_SupplierId.setText(listOfSuppliers.get(listOfSuppliers.indexOf(supp)).getSupplierId()+ "");
+            txt_SupplierMobileNo.setText(listOfSuppliers.get(listOfSuppliers.indexOf(supp)).getSupplierContactNo());
+            txt_SupplierName.setText(listOfSuppliers.get(listOfSuppliers.indexOf(supp)).getSupplierName());
+            txt_SupplierAddress.setText(listOfSuppliers.get(listOfSuppliers.indexOf(supp)).getSupplierAddress());
         }
     }
     
@@ -409,24 +817,94 @@ private void clearCustomerFormFields() {
     private javax.swing.JButton btn_CustomerDelete;
     private javax.swing.JButton btn_CustomerInsert;
     private javax.swing.JButton btn_CustomerUpdate;
+    private javax.swing.JButton btn_Reset;
+    private javax.swing.JButton btn_ResetCustomers;
+    private javax.swing.JButton btn_SupplierDelete;
+    private javax.swing.JButton btn_SupplierInsert;
+    private javax.swing.JButton btn_SupplierUpdate;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTabbedPane tab_Customers;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTabbedPane tab_Stocks;
     private javax.swing.JTable tbl_Customers;
+    private javax.swing.JTable tbl_Suppliers;
     private javax.swing.JTextArea txt_CustomerAddress;
     private javax.swing.JTextField txt_CustomerCnic;
     private javax.swing.JTextField txt_CustomerId;
     private javax.swing.JTextField txt_CustomerMobileNo;
     private javax.swing.JTextField txt_CustomerName;
+    private javax.swing.JTextField txt_SearchCustomer;
+    private javax.swing.JTextField txt_SearchField;
+    private javax.swing.JTextArea txt_SupplierAddress;
+    private javax.swing.JTextField txt_SupplierId;
+    private javax.swing.JTextField txt_SupplierMobileNo;
+    private javax.swing.JTextField txt_SupplierName;
     // End of variables declaration//GEN-END:variables
+
+    private void addDocumentListnerForSearchFields() {
+        txt_SearchField.getDocument().addDocumentListener(new DocumentListener() {
+         @Override
+         public void insertUpdate(DocumentEvent e) {
+            search(txt_SearchField.getText());
+         }
+         @Override
+         public void removeUpdate(DocumentEvent e) {
+            search(txt_SearchField.getText());
+         }
+         @Override
+         public void changedUpdate(DocumentEvent e) {
+            search(txt_SearchField.getText());
+         }
+         public void search(String str) {
+            if (str.length() == 0) {
+               sorter.setRowFilter(null);
+            } else {
+               sorter.setRowFilter(RowFilter.regexFilter(str));
+            }
+         }
+
+          
+      });
+        txt_SearchCustomer.getDocument().addDocumentListener(new DocumentListener() {
+         @Override
+         public void insertUpdate(DocumentEvent e) {
+            search(txt_SearchCustomer.getText());
+         }
+         @Override
+         public void removeUpdate(DocumentEvent e) {
+            search(txt_SearchCustomer.getText());
+         }
+         @Override
+         public void changedUpdate(DocumentEvent e) {
+            search(txt_SearchCustomer.getText());
+         }
+         public void search(String str) {
+            if (str.length() == 0) {
+               sorterCustomer.setRowFilter(null);
+            } else {
+               sorterCustomer.setRowFilter(RowFilter.regexFilter(str));
+            }
+         }
+
+          
+      });
+    }
 
   
 

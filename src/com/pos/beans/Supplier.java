@@ -1,5 +1,7 @@
 package com.pos.beans;
 
+import java.util.Objects;
+
 
 
 public class Supplier {
@@ -41,6 +43,28 @@ public class Supplier {
 	public String getSupplierEmail() {
 		return supplierEmail;
 	}
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 73 * hash + Objects.hashCode(this.supplierId);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Supplier other = (Supplier) obj;
+        if (!Objects.equals(this.supplierId, other.supplierId)) {
+            return false;
+        }
+        return true;
+    }
 
 	public void setSupplierEmail(String supplierEmail) {
 		this.supplierEmail = supplierEmail;

@@ -1,5 +1,7 @@
 package com.pos.beans;
 
+import java.util.Objects;
+
 
 
 
@@ -34,6 +36,28 @@ public class Customer {
 	public String getMobileNo() {
 		return mobileNo;
 	}
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 31 * hash + Objects.hashCode(this.customerId);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Customer other = (Customer) obj;
+        if (!Objects.equals(this.customerId, other.customerId)) {
+            return false;
+        }
+        return true;
+    }
 
 	public void setMobileNo(String mobileNo) {
 		this.mobileNo = mobileNo;

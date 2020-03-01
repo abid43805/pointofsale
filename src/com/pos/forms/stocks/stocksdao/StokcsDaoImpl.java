@@ -6,6 +6,7 @@
 package com.pos.forms.stocks.stocksdao;
 
 import com.pos.beans.Customer;
+import com.pos.beans.Supplier;
 import com.pos.utils.DBUtils;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,9 +22,13 @@ import java.util.List;
 public class StokcsDaoImpl extends StocksDao{
 
     private static final String CUSTOMER_INSERT_QUERY =  "INSERT INTO customers(customer_name, customer_mobile_no, customer_cnic, customer_address) values(?,?,?,?)";
+    private static final String SUPPLIER_INSERT_QUERY =  "INSERT INTO suppliers(sup_name, sup_contact_number, sup_address) values(?,?,?)";
     private static final String CUSTOMER_FETCH_QUERY = "select * from customers";
+    private static final String SUPPLIERS_FETCH_QUERY = "select * from suppliers";
     private static final String CUSTOMER_UPDATE_QUERY = "update customers set customer_name = ?, customer_mobile_no = ?, customer_cnic = ?, customer_address = ? where customer_id = ?";
+    private static final String SUPPLIER_UPDATE_QUERY = "update suppliers set sup_name=?, sup_contact_number=?, sup_address =? where sup_id = ?";
     private static final String CUSTOMER_DELETE_QUERY = "DELETE FROM customers WHERE customer_id = ?";
+    private static final String SUPPLIER_DELETE_QUERY = "DELETE FROM suppliers WHERE sup_id = ?";
     @Override
     public boolean insertCustomer(Customer customer) {
         Connection con = null;
@@ -54,6 +59,39 @@ public class StokcsDaoImpl extends StocksDao{
         } finally {
             DBUtils.close(con);
             DBUtils.closePreparedStmnt(ps);
+        }
+    }
+@Override
+    public boolean insertSupplier(Supplier supplier) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        int rs;
+        int count = 1;
+        try {
+            con = DBUtils.getConnection();
+            ps = con.prepareStatement(SUPPLIER_INSERT_QUERY);
+            ps.setString(count++, supplier.getSupplierName());
+            ps.setString(count++, supplier.getSupplierContactNo());
+            ps.setString(count++, supplier.getSupplierAddress());
+  
+            rs = ps.executeUpdate();
+            if (rs > 0) // found
+            {
+                System.out.println("Supplier insert successfull : ");
+                
+                return true;
+            }
+            else {
+                return false;
+            }
+        } catch (Exception ex) {
+            System.out.println("Error in inserting supplier -->" + ex.getMessage());
+            ex.printStackTrace();
+            return false;
+        } finally {
+            DBUtils.close(con);
+            DBUtils.closePreparedStmnt(ps);
+            
         }
     }
 
@@ -95,6 +133,40 @@ public class StokcsDaoImpl extends StocksDao{
         }
         return listOfCustomer;
     }
+    @Override
+    public List<Supplier> fetchSupplier() {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int count = 1;
+        Supplier supplier;
+        List<Supplier> listOfSupplier = null;
+        try {
+            listOfSupplier = new ArrayList<Supplier>();
+            con = DBUtils.getConnection();
+            ps = con.prepareStatement(SUPPLIERS_FETCH_QUERY);
+            
+            rs = ps.executeQuery();
+            while (rs.next()) // found
+            {
+                supplier = new Supplier();
+                supplier.setSupplierId(rs.getLong("sup_id"));
+                supplier.setSupplierName(rs.getString("sup_name"));
+                supplier.setSupplierContactNo(rs.getString("sup_contact_number"));
+                supplier.setSupplierAddress(rs.getString("sup_address"));
+                
+                       
+                listOfSupplier.add(supplier);
+            }
+        } catch (Exception ex) {
+            System.out.println("Error in fetching suppliers -->" + ex);
+           } finally {
+            DBUtils.close(con);
+            DBUtils.closePreparedStmnt(ps);
+            DBUtils.closeResultSet(rs);
+        }
+        return listOfSupplier;
+    }
 
     @Override
     public boolean updateCustomer(Customer cust) {
@@ -122,6 +194,38 @@ public class StokcsDaoImpl extends StocksDao{
             }
         } catch (Exception ex) {
             System.out.println("Error in updating customers -->" + ex);
+           } finally {
+            DBUtils.close(con);
+            DBUtils.closePreparedStmnt(ps);
+            }
+        return customerUpdated;
+    }
+    @Override
+    public boolean updateSupplier(Supplier supplier) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        int rs;
+        int count = 1;
+        
+        boolean customerUpdated = false;
+        
+        try {
+            
+            con = DBUtils.getConnection();
+            ps = con.prepareStatement(SUPPLIER_UPDATE_QUERY);
+            ps.setString(count++, supplier.getSupplierName());
+            ps.setString(count++, supplier.getSupplierContactNo());
+            
+            ps.setString(count++, supplier.getSupplierAddress());
+            ps.setLong(count++, supplier.getSupplierId());
+            rs = ps.executeUpdate();
+            if (rs > 0) // updated
+            {
+                System.out.println("Supplier updated successfully");
+                customerUpdated = true;      
+            }
+        } catch (Exception ex) {
+            System.out.println("Error in updating supplier -->" + ex);
            } finally {
             DBUtils.close(con);
             DBUtils.closePreparedStmnt(ps);
@@ -157,5 +261,33 @@ public class StokcsDaoImpl extends StocksDao{
             DBUtils.closePreparedStmnt(ps);
             }
         return customerdeleted;
+    }
+     @Override
+    public boolean deleteSupplier(Supplier supplier) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        int rs;
+        int count = 1;
+        
+        boolean supplierDeleted = false;
+        
+        try {
+            
+            con = DBUtils.getConnection();
+            ps = con.prepareStatement(SUPPLIER_DELETE_QUERY);
+            ps.setInt(count++, Integer.parseInt(supplier.getSupplierId()+""));
+            rs = ps.executeUpdate();
+            if (rs > 0) // updated
+            {
+                System.out.println("Supplier deleted successfully");
+                supplierDeleted = true;      
+            }
+        } catch (Exception ex) {
+            System.out.println("Error in deleting supplier -->" + ex);
+           } finally {
+            DBUtils.close(con);
+            DBUtils.closePreparedStmnt(ps);
+            }
+        return supplierDeleted;
     }
 }
