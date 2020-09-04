@@ -6,6 +6,7 @@
 package com.pos.forms.stocks.stocksservice;
 
 import com.pos.beans.Customer;
+import com.pos.beans.Products;
 import com.pos.beans.Supplier;
 import com.pos.forms.stocks.stocksdao.StocksDao;
 import com.pos.forms.stocks.stocksdao.StokcsDaoImpl;
@@ -88,6 +89,39 @@ public class StocksService {
         StocksDao stocksDao = new StokcsDaoImpl();
         boolean suppDeleted =  stocksDao.deleteSupplier(supplier);
         return suppDeleted; 
+    }
+     public boolean deleteProduct(Products product) {
+        StocksDao stocksDao = new StokcsDaoImpl();
+        boolean suppDeleted =  stocksDao.deleteProduct(product);
+        return suppDeleted; 
+    }
+
+    public List<Products> fetchProductsList() {
+        StocksDao stocksDao = new StokcsDaoImpl();
+        List<Products> list =  stocksDao.fetchProducts();
+        return list;
+    }
+
+    public boolean insertProduct(Products product) {
+         StocksDao stocksDao = new StokcsDaoImpl();
+        boolean productInserted = false;
+        if(null != product)
+        {
+            productInserted =  stocksDao.insertProduct(product);
+        }
+        else
+        {
+            System.out.println("product object is null");
+            productInserted =  false;
+        }
+        return productInserted;
+    }
+
+    public boolean updateProduct(Products product) {
+        StocksDao stocksDao = new StokcsDaoImpl();
+        boolean suppUpdated =  stocksDao.updateProduct(product);
+        return suppUpdated;    
+    
     }
    
     

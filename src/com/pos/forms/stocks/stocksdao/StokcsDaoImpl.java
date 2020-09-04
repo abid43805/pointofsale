@@ -6,6 +6,7 @@
 package com.pos.forms.stocks.stocksdao;
 
 import com.pos.beans.Customer;
+import com.pos.beans.Products;
 import com.pos.beans.Supplier;
 import com.pos.utils.DBUtils;
 import java.sql.Connection;
@@ -23,12 +24,17 @@ public class StokcsDaoImpl extends StocksDao{
 
     private static final String CUSTOMER_INSERT_QUERY =  "INSERT INTO customers(customer_name, customer_mobile_no, customer_cnic, customer_address) values(?,?,?,?)";
     private static final String SUPPLIER_INSERT_QUERY =  "INSERT INTO suppliers(sup_name, sup_contact_number, sup_address) values(?,?,?)";
+    private static final String PRODUCT_INSERT_QUERY =   "INSERT INTO products(product_name, price, quantity_at_hand, purchase_price, supplier_id) values(?,?,?,?,?)";
+    
     private static final String CUSTOMER_FETCH_QUERY = "select * from customers";
     private static final String SUPPLIERS_FETCH_QUERY = "select * from suppliers";
+    private static final String PRODUCTS_FETCH_QUERY = "select * from products";
     private static final String CUSTOMER_UPDATE_QUERY = "update customers set customer_name = ?, customer_mobile_no = ?, customer_cnic = ?, customer_address = ? where customer_id = ?";
     private static final String SUPPLIER_UPDATE_QUERY = "update suppliers set sup_name=?, sup_contact_number=?, sup_address =? where sup_id = ?";
+    private static final String PRODUCT_UPDATE_QUERY = "update products set product_name=?, price=?, quantity_at_hand=?, purchase_price=?, supplier_id=? where product_id = ?";
     private static final String CUSTOMER_DELETE_QUERY = "DELETE FROM customers WHERE customer_id = ?";
     private static final String SUPPLIER_DELETE_QUERY = "DELETE FROM suppliers WHERE sup_id = ?";
+    private static final String PRODUCT_DELETE_QUERY = "DELETE FROM products WHERE product_id = ?";
     @Override
     public boolean insertCustomer(Customer customer) {
         Connection con = null;
@@ -167,6 +173,43 @@ public class StokcsDaoImpl extends StocksDao{
         }
         return listOfSupplier;
     }
+    @Override
+    public List<Products> fetchProducts() {
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int count = 1;
+        Products product;
+        List<Products> listOfProducts = null;
+        try {
+            listOfProducts = new ArrayList<Products>();
+            con = DBUtils.getConnection();
+            ps = con.prepareStatement(PRODUCTS_FETCH_QUERY);
+            
+            rs = ps.executeQuery();
+            while (rs.next()) // found
+            {
+                product = new Products();
+                product.setProductId(rs.getLong("product_id"));
+                product.setProductName(rs.getString("product_name"));
+                product.setPrice(rs.getDouble("price"));
+                product.setQuantityAtHand(rs.getLong("quantity_at_hand"));
+                product.setSupplierId(rs.getString("supplier_id"));
+                product.setPurchasePrice(rs.getDouble("purchase_price"));
+                
+                
+                       
+                listOfProducts.add(product);
+            }
+        } catch (Exception ex) {
+            System.out.println("Error in fetching products -->" + ex);
+           } finally {
+            DBUtils.close(con);
+            DBUtils.closePreparedStmnt(ps);
+            DBUtils.closeResultSet(rs);
+        }
+        return listOfProducts;
+    }
 
     @Override
     public boolean updateCustomer(Customer cust) {
@@ -289,5 +332,106 @@ public class StokcsDaoImpl extends StocksDao{
             DBUtils.closePreparedStmnt(ps);
             }
         return supplierDeleted;
+    }
+     public boolean deleteProduct(Products product) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        int rs;
+        int count = 1;
+        
+        boolean supplierDeleted = false;
+        
+        try {
+            
+            con = DBUtils.getConnection();
+            ps = con.prepareStatement(PRODUCT_DELETE_QUERY);
+            ps.setInt(count++, Integer.parseInt(product.getProductId()+""));
+            rs = ps.executeUpdate();
+            if (rs > 0) // updated
+            {
+                System.out.println("Product deleted successfully");
+                supplierDeleted = true;      
+            }
+        } catch (Exception ex) {
+            System.out.println("Error in deleting product -->" + ex);
+           } finally {
+            DBUtils.close(con);
+            DBUtils.closePreparedStmnt(ps);
+            }
+        return supplierDeleted;
+    }
+    
+    @Override
+    public boolean insertProduct(Products product) {
+        Connection con = null;
+        PreparedStatement ps = null;
+        int rs;
+        int count = 1;
+        try {
+            con = DBUtils.getConnection();
+            ps = con.prepareStatement(PRODUCT_INSERT_QUERY);
+            ps.setString(count++, product.getProductName());
+            ps.setString(count++, ""+product.getPrice());
+            ps.setString(count++, ""+product.getQuantityAtHand());
+            ps.setString(count++, ""+product.getPurchasePrice());
+            ps.setString(count++, product.getSupplierId());
+  
+            rs = ps.executeUpdate();
+            if (rs > 0) // found
+            {
+                System.out.println("Product insert successfull : ");
+                
+                return true;
+            }
+            else {
+                return false;
+            }
+        } catch (Exception ex) {
+            System.out.println("Error in inserting product -->" + ex.getMessage());
+            ex.printStackTrace();
+            return false;
+        } finally {
+            DBUtils.close(con);
+            DBUtils.closePreparedStmnt(ps);
+            
+        }
+    }
+
+    @Override
+    public boolean updateProduct(Products product) {
+    
+        Connection con = null;
+        PreparedStatement ps = null;
+        int rs;
+        int count = 1;
+        
+        boolean customerUpdated = false;
+        
+        try {
+            
+            con = DBUtils.getConnection();
+            ps = con.prepareStatement(PRODUCT_UPDATE_QUERY);
+            //"update products set product_name=?, price=?, quantity_at_hand=?, purchase_price=?, supplier_id=? where product_id = ?";
+            ps.setString(count++, product.getProductName());
+            ps.setDouble(count++, product.getPrice());
+            
+            ps.setLong(count++, product.getQuantityAtHand());
+            ps.setDouble(count++, product.getPurchasePrice());
+            ps.setString(count++, product.getSupplierId());
+            ps.setLong(count++, product.getProductId());
+            rs = ps.executeUpdate();
+            if (rs > 0) // updated
+            {
+                System.out.println("Product updated successfully");
+                customerUpdated = true;      
+            }
+        } catch (Exception ex) {
+            System.out.println("Error in updating product -->" + ex);
+           } finally {
+            DBUtils.close(con);
+            DBUtils.closePreparedStmnt(ps);
+            }
+        return customerUpdated;
+    
     }
 }

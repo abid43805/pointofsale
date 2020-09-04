@@ -1,5 +1,7 @@
 package com.pos.beans;
 
+import java.util.Objects;
+
 
 
 
@@ -9,8 +11,8 @@ public class Products {
 	private String productName;
 	private Double price;
 	private Double purchasePrice;
-	private Double quantityAtHand;
-	private Supplier supplierId;
+	private Long quantityAtHand;
+	private String supplierId;
 
 	
 	public Long getProductId() {
@@ -40,20 +42,20 @@ public class Products {
 	}
 
 	
-	public Double getQuantityAtHand() {
+	public Long getQuantityAtHand() {
 		return quantityAtHand;
 	}
 
-	public void setQuantityAtHand(Double quantityAtHand) {
+	public void setQuantityAtHand(Long quantityAtHand) {
 		this.quantityAtHand = quantityAtHand;
 	}
 
 	
-	public Supplier getSupplierId() {
+	public String getSupplierId() {
 		return supplierId;
 	}
 
-	public void setSupplierId(Supplier supplierId) {
+	public void setSupplierId(String supplierId) {
 		this.supplierId = supplierId;
 	}
 	
@@ -69,4 +71,28 @@ public class Products {
         {
             return this.productName;
         }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.productId);
+        hash = 29 * hash + Objects.hashCode(this.productName);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Products other = (Products) obj;
+        if (!Objects.equals(this.productId, other.productId)) {
+            return false;
+        }
+        return true;
+    }
+        
 }

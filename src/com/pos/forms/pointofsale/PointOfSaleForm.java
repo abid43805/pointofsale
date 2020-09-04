@@ -47,7 +47,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         initComponents();
         txt_SaleId.setText(""+(posService.calculateSaleId()+1));
         DBUtils.addItemsToCombo(cmb_Products, listOfProducts, "Select Product", idsVectorOfProducts);
-        DBUtils.addItemsToCombo(cmb_Customer, listOfCustomers, "Select Customer", idsVectorOfCustomers);
+        DBUtils.addItemsToCombo(cmb_Customer, listOfCustomers, "Walk In Customer", idsVectorOfCustomers);
         
        
         
@@ -76,6 +76,9 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         txt_SubTotal = new javax.swing.JTextField();
         cmb_Customer = new javax.swing.JComboBox();
         cmb_Products = new javax.swing.JComboBox();
+        jLabel10 = new javax.swing.JLabel();
+        lbl_RemainingQuantity = new javax.swing.JLabel();
+        btn_ClearCart = new javax.swing.JButton();
         pnl_PaymentPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -132,6 +135,15 @@ public class PointOfSaleForm extends javax.swing.JFrame {
             }
         });
 
+        jLabel10.setText("Quantity Remaining:");
+
+        btn_ClearCart.setText("Clear Cart");
+        btn_ClearCart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ClearCartActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnl_SalePanelLayout = new javax.swing.GroupLayout(pnl_SalePanel);
         pnl_SalePanel.setLayout(pnl_SalePanelLayout);
         pnl_SalePanelLayout.setHorizontalGroup(
@@ -153,9 +165,19 @@ public class PointOfSaleForm extends javax.swing.JFrame {
                     .addComponent(txt_SubTotal)
                     .addComponent(cmb_Products, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cmb_Customer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 51, Short.MAX_VALUE)
-                .addComponent(btn_AddToDetail)
-                .addContainerGap())
+                .addGroup(pnl_SalePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnl_SalePanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
+                        .addComponent(btn_ClearCart)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_AddToDetail)
+                        .addContainerGap())
+                    .addGroup(pnl_SalePanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lbl_RemainingQuantity)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         pnl_SalePanelLayout.setVerticalGroup(
             pnl_SalePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,11 +206,13 @@ public class PointOfSaleForm extends javax.swing.JFrame {
                                         .addGap(3, 3, 3)))
                                 .addGap(18, 18, 18)
                                 .addGroup(pnl_SalePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(txt_Quantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(pnl_SalePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(txt_Quantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jLabel10)
+                                        .addComponent(lbl_RemainingQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(pnl_SalePanelLayout.createSequentialGroup()
                                         .addComponent(jLabel5)
                                         .addGap(9, 9, 9)))
-                                .addGap(18, 18, 18)
                                 .addComponent(txt_SubTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(pnl_SalePanelLayout.createSequentialGroup()
                                 .addGap(88, 88, 88)
@@ -196,8 +220,12 @@ public class PointOfSaleForm extends javax.swing.JFrame {
                         .addGap(15, 35, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_SalePanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btn_AddToDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGroup(pnl_SalePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btn_AddToDetail, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btn_ClearCart, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)))))
         );
+
+        jLabel10.getAccessibleContext().setAccessibleDescription("");
 
         pnl_PaymentPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Payment Summary", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 18), new java.awt.Color(0, 0, 255))); // NOI18N
 
@@ -210,12 +238,12 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         txt_AmountDue.setEditable(false);
 
         txt_AmountChange.setEditable(false);
-        txt_AmountChange.addActionListener(new java.awt.event.ActionListener() {
+
+        txt_AmountPaid.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_AmountChangeActionPerformed(evt);
+                txt_AmountPaidActionPerformed(evt);
             }
         });
-
         txt_AmountPaid.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 txt_AmountPaidFocusLost(evt);
@@ -223,6 +251,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         });
 
         btn_SaleCommit.setText("Commit");
+        btn_SaleCommit.setEnabled(false);
         btn_SaleCommit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btn_SaleCommitActionPerformed(evt);
@@ -275,9 +304,14 @@ public class PointOfSaleForm extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Sale ID", "Product Name", "Price", "Quantity", "Sub Total"
+                "Sale ID", "Product ID", "Product Name", "Price", "Quantity", "Sub Total"
             }
         ));
+        tbl_SaleDetail.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_SaleDetailMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbl_SaleDetail);
 
         javax.swing.GroupLayout pnl_SaleDetailPanelLayout = new javax.swing.GroupLayout(pnl_SaleDetailPanel);
@@ -286,7 +320,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
             pnl_SaleDetailPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnl_SaleDetailPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 852, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pnl_SaleDetailPanelLayout.setVerticalGroup(
@@ -331,13 +365,13 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel)tbl_SaleDetail.getModel();
         // clear jtable content
        
-        Object[] row = new Object[5];
+        Object[] row = new Object[6];
         
             row[0] = txt_SaleId.getText();
              
             if(cmb_Products.getSelectedIndex() != 0)
             {
-                row[1] = cmb_Products.getSelectedItem();
+                row[2] = cmb_Products.getSelectedItem();
             }
             else
             {
@@ -345,13 +379,13 @@ public class PointOfSaleForm extends javax.swing.JFrame {
              cmb_Products.requestFocus();
              return;
             }
-            row[2] = txt_Price.getText();
+            row[3] = txt_Price.getText();
             
                 
             boolean validInteger = DBUtils.checkValidInteger(txt_Quantity.getText());
             if(validInteger)
             {
-                row[3] = txt_Quantity.getText();
+                row[4] = txt_Quantity.getText();
             }
             else
             {
@@ -361,20 +395,30 @@ public class PointOfSaleForm extends javax.swing.JFrame {
             }
           
             
-            row[4] = txt_SubTotal.getText();
-            
-            
-            model.addRow(row);
+            row[5] = txt_SubTotal.getText();
             
             Long saleId = Long.parseLong(txt_SaleId.getText());
             Long productId = idsVectorOfProducts.get(cmb_Products.getSelectedIndex()-1);        //as selected index starts from 1
+            row[1] = productId;
             
+            model.addRow(row);            
             Double price = Double.parseDouble(txt_Price.getText());
             Long quantity = Long.parseLong(txt_Quantity.getText());
             Double subTotal = Double.parseDouble(txt_SubTotal.getText());
             
             SaleDetail saleDetail = new SaleDetail(saleId, productId, price, quantity, subTotal);
-            this.listOfSaleDetail.add(saleDetail);
+            int indexOfSaleDetailExisting = this.listOfSaleDetail.indexOf(saleDetail);
+            
+            if(indexOfSaleDetailExisting==-1)
+            {   
+                this.listOfSaleDetail.add(saleDetail);
+            }
+            else
+            {
+//               this.listOfSaleDetail.remove(indexOfSaleDetailExisting);
+               removeSaleDetailFromCart(saleDetail);
+               this.listOfSaleDetail.add(indexOfSaleDetailExisting, saleDetail);
+            }
             
             Double amountDue = txt_AmountDue.getText().equals("")?0:Double.parseDouble(txt_AmountDue.getText()) ;
             txt_AmountDue.setText((amountDue + Double.parseDouble(txt_SubTotal.getText()))+"");
@@ -385,7 +429,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
             txt_Price.setText("");
             txt_Quantity.setText("");
             txt_SubTotal.setText("");
-            
+            btn_SaleCommit.setEnabled(true);
             
               
         
@@ -397,10 +441,18 @@ public class PointOfSaleForm extends javax.swing.JFrame {
     }//GEN-LAST:event_txt_QuantityActionPerformed
 
     private void btn_SaleCommitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SaleCommitActionPerformed
+        calculateChangeAmount();
+        double amountChange = Double.parseDouble(txt_AmountChange.getText().equals("") ? "0":txt_AmountChange.getText());
+        if(amountChange<0)
+        {
+            JOptionPane.showMessageDialog(pnl_SaleDetailPanel,"Please ask for Rs."+ -1*(amountChange)+"/- more.");   
+            txt_AmountPaid.requestFocus();
+            return; 
+        }
         PointOfSaleService posService = new PointOfSaleService();
          Sales sale = new Sales();
-         sale.setSaleId(Long.parseLong(txt_SaleId.getText()));    
-         Long customerId = idsVectorOfCustomers.get(cmb_Customer.getSelectedIndex());        //as selected index starts from 1
+         sale.setSaleId(Long.parseLong(txt_SaleId.getText()));   
+         Long customerId = Long.valueOf(idsVectorOfCustomers.get(cmb_Customer.getSelectedIndex())+"");        
          Customer customer = new Customer();
          customer.setCustomerId(customerId);
          sale.setCustomer(customer);
@@ -412,11 +464,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         if(result)
         {
             txt_SaleId.setText(""+(posService.calculateSaleId()+1));
-            txt_AmountDue.setText("");
-            txt_AmountPaid.setText("");
-            txt_AmountChange.setText("");
-            listOfSaleDetail.clear();
-            DBUtils.resetJTable(tbl_SaleDetail);
+            clearCart();
             JOptionPane.showMessageDialog(pnl_SaleDetailPanel,"Sale commited successfully.");
         }
         else
@@ -434,7 +482,21 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         Products selectedProduct =  listOfProducts.get(index);
         if(null != selectedProduct)
         {
-        txt_Price.setText(selectedProduct.getPrice().toString());
+            txt_Price.setText(selectedProduct.getPrice().toString());
+            txt_Quantity.setText("");
+            txt_SubTotal.setText("");
+            PointOfSaleService service =  new PointOfSaleService();
+            Long quantityAtHand = service.fetchQuantityAtHand(selectedProduct);
+            Long remainingQuantity = quantityAtHand - 0;    //as quantity is no entered yet
+            if(remainingQuantity>=0){
+                lbl_RemainingQuantity.setText(remainingQuantity+"");
+                btn_AddToDetail.setEnabled(true);
+            }
+            else{
+                lbl_RemainingQuantity.setText("Product out of stock");
+                btn_AddToDetail.setEnabled(false);
+            }
+            
         }
       }
       else
@@ -451,26 +513,55 @@ public class PointOfSaleForm extends javax.swing.JFrame {
        {
         Long quantity = Long.parseLong(txt_Quantity.getText());
         Double price = Double.parseDouble(txt_Price.getText());
-        txt_SubTotal.setText((quantity * price)+"");        
-       }
-       else
-       {
-           txt_SubTotal.setText("0");
-       }
+        txt_SubTotal.setText((quantity * price)+"");    
+        PointOfSaleService service =  new PointOfSaleService();
+         int index = cmb_Products.getSelectedIndex()-1;  //leave first item title 
+        if (index != -1 && listOfProducts.size() > 0) {
+            Products selectedProduct = listOfProducts.get(index);
+            if (null != selectedProduct) {
+                Long quantityAtHand = service.fetchQuantityAtHand(selectedProduct);
+                Long orderedQuantity = Long.parseLong(txt_Quantity.getText()!=""?txt_Quantity.getText():"0");
+                Long remainingQuantity = quantityAtHand - orderedQuantity;
+                if(remainingQuantity>=0){
+                    lbl_RemainingQuantity.setText(remainingQuantity+"");
+                    btn_AddToDetail.setEnabled(true);
+                }
+                else{
+                    lbl_RemainingQuantity.setText("Product out of stock");
+                    btn_AddToDetail.setEnabled(false);
+                }
+                
+            }
+        }
+        else
+        {
+            txt_SubTotal.setText("0");
+        }
        
        
-        
+       }  
     }//GEN-LAST:event_txt_QuantityFocusLost
 
-    private void txt_AmountChangeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_AmountChangeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_AmountChangeActionPerformed
-
     private void txt_AmountPaidFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_AmountPaidFocusLost
-            Double amountPaid = txt_AmountPaid.getText().equals("")?0:Double.parseDouble(txt_AmountPaid.getText()) ;
-            txt_AmountChange.setText((amountPaid - Double.parseDouble(txt_AmountDue.getText()))+"");
+            calculateChangeAmount();
               
     }//GEN-LAST:event_txt_AmountPaidFocusLost
+
+    private void btn_ClearCartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ClearCartActionPerformed
+         clearCart();
+    }//GEN-LAST:event_btn_ClearCartActionPerformed
+
+    private void txt_AmountPaidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_AmountPaidActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_AmountPaidActionPerformed
+
+    private void tbl_SaleDetailMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_SaleDetailMouseClicked
+        // TODO add your handling code here:
+        int index = tbl_SaleDetail.getSelectedRow();
+        String saleId = tbl_SaleDetail.getModel().getValueAt(tbl_SaleDetail.convertRowIndexToModel(index),0).toString();
+        String productId = tbl_SaleDetail.getModel().getValueAt(tbl_SaleDetail.convertRowIndexToModel(index),1).toString();
+        showProductInFormFields(saleId, productId);
+    }//GEN-LAST:event_tbl_SaleDetailMouseClicked
 
     /**
      * @param args the command line arguments
@@ -509,10 +600,12 @@ public class PointOfSaleForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_AddToDetail;
+    private javax.swing.JButton btn_ClearCart;
     private javax.swing.JButton btn_SaleCommit;
     private javax.swing.JComboBox cmb_Customer;
     private javax.swing.JComboBox cmb_Products;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -522,6 +615,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lbl_RemainingQuantity;
     private javax.swing.JPanel pnl_PaymentPanel;
     private javax.swing.JPanel pnl_SaleDetailPanel;
     private javax.swing.JPanel pnl_SalePanel;
@@ -534,4 +628,60 @@ public class PointOfSaleForm extends javax.swing.JFrame {
     private javax.swing.JTextField txt_SaleId;
     private javax.swing.JTextField txt_SubTotal;
     // End of variables declaration//GEN-END:variables
+
+    private void clearSaleDetailTable() {
+         DefaultTableModel dm = (DefaultTableModel)tbl_SaleDetail.getModel();
+        int rowCount = dm.getRowCount();
+        //Remove rows one by one from the end of the table
+        for (int i = rowCount - 1; i >= 0; i--) {
+            dm.removeRow(i);
+        }
+    }
+
+    private void clearCart() {
+        cmb_Customer.setSelectedIndex(0);
+        cmb_Products.setSelectedIndex(0);
+        txt_Price.setText("");
+        txt_Quantity.setText("");
+        lbl_RemainingQuantity.setText("");
+        txt_SubTotal.setText("");
+        
+        txt_AmountDue.setText("");
+        txt_AmountPaid.setText("");
+        txt_AmountChange.setText("");
+        
+        listOfSaleDetail.clear();
+        DBUtils.resetJTable(tbl_SaleDetail);
+        btn_SaleCommit.setEnabled(false);
+    }
+
+    private void calculateChangeAmount() {
+        Double amountPaid = txt_AmountPaid.getText().equals("")?0:Double.parseDouble(txt_AmountPaid.getText()) ;
+        txt_AmountChange.setText((amountPaid - Double.parseDouble(txt_AmountDue.getText()))+"");
+    }
+
+    private void showProductInFormFields(String saleId, String productId) {
+        if(productId != null && !"".equals(productId) )
+        {
+            Products product = new Products();
+            product.setProductId(Long.parseLong(productId));
+            
+            SaleDetail saleDetail = new SaleDetail();
+            saleDetail.setProduct(Long.parseLong(productId));
+            saleDetail.setSale(Long.parseLong(saleId));
+            
+            cmb_Products.setSelectedIndex(listOfProducts.indexOf(product)+1);
+            txt_Quantity.setText(listOfSaleDetail.get(listOfSaleDetail.indexOf(saleDetail)).getQuantity()+"");
+
+            
+            btn_AddToDetail.requestFocus();
+        }
+
+    }
+
+    private void removeSaleDetailFromCart(SaleDetail saleDetail) {
+        DefaultTableModel model = (DefaultTableModel)tbl_SaleDetail.getModel();
+        model.removeRow(listOfSaleDetail.indexOf(saleDetail));
+        this.listOfSaleDetail.remove(listOfSaleDetail.get(listOfSaleDetail.indexOf(saleDetail)));   //remove from cart and sent for updation
+    }
 }

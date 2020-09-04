@@ -10,13 +10,21 @@ import com.pos.beans.Sales;
 import com.pos.forms.pointofsale.dao.PointOfSaleDao;
 import com.pos.forms.pointofsale.dao.PointOfSaleDaoImpl;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.BasisLibrary;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author AbidAli
  */
 public class PointOfSaleService {
+    public Long fetchQuantityAtHand(Products product)
+    {
+        PointOfSaleDao posDao = new PointOfSaleDaoImpl();
+        return posDao.fetchQuantityAtHand(product); 
+    }
     public List<Products> fetchProductsList()
     {
         PointOfSaleDao posDao = new PointOfSaleDaoImpl();
@@ -34,20 +42,24 @@ public class PointOfSaleService {
       PointOfSaleDao posDao = new PointOfSaleDaoImpl();
       boolean saleResult;
       boolean saleDetailResult = false;
-      saleResult =  posDao.performSale(sale);
-      if(saleResult)
-      {
-        int[] resultOfSaleDetail= posDao.performSaleDetailInsert(sale, listOfSaleDetail);
-        if(resultOfSaleDetail!= null && resultOfSaleDetail.length>0)
-        {
-                saleDetailResult = true;
-        }
-      }
-     else
-       {
-           System.out.println("sale inserts failure inside service");
+    try {
+                saleResult =  posDao.performSale(sale, listOfSaleDetail);
+
+                if(saleResult)
+                {
+          //        int[] resultOfSaleDetail= posDao.performSaleDetailInsert(sale, listOfSaleDetail);
+          //        if(resultOfSaleDetail!= null && resultOfSaleDetail.length>0)
+          //        {
+                          saleDetailResult = true;
+          //        }
+                }
+               else
+                 {
+                     System.out.println("sale inserts failure inside service");
+                 }
+       } catch (SQLException ex) {
+            Logger.getLogger(PointOfSaleService.class.getName()).log(Level.SEVERE, null, ex);
        }
-      
      return saleDetailResult;
       
     }

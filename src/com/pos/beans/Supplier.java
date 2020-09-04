@@ -78,4 +78,9 @@ public class Supplier {
 	public void setSupplierAddress(String supplierAddress) {
 		this.supplierAddress = supplierAddress;
 	}
+        @Override
+        public String toString()
+        {
+            return this.supplierName;
+        }
 }

@@ -5,14 +5,18 @@
  */
 package com.pos.forms.stocks;
 
+import com.mysql.jdbc.StringUtils;
 import com.pos.beans.Customer;
+import com.pos.beans.Products;
 import com.pos.beans.Supplier;
 import com.pos.beans.User;
 import com.pos.forms.loginform.loginservice.LoginService;
 import com.pos.forms.stocks.stocksservice.StocksService;
 import com.pos.forms.welcome.WelcomeForm;
+import com.pos.utils.DBUtils;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import javax.swing.JOptionPane;
 import javax.swing.RowFilter;
 import javax.swing.event.DocumentEvent;
@@ -27,8 +31,11 @@ import javax.swing.table.TableRowSorter;
 public class StocksForm extends javax.swing.JFrame {
     List<Customer> listOfCustomers;
     List<Supplier> listOfSuppliers;
+    List<Products> listOfProducts;
     private TableRowSorter sorter;
     private TableRowSorter sorterCustomer;
+    private TableRowSorter sorterProducts;
+    Vector<Long> idsVectorOfSuppliers = new Vector<Long>();
     
     /**
      * Creates new form StocksForm
@@ -37,7 +44,10 @@ public class StocksForm extends javax.swing.JFrame {
         initComponents();
         showCustomersInTable();
         showSuppliersInTable();
+        showProductsInTable();
         addDocumentListnerForSearchFields();
+        DBUtils.addItemsToCombo(cmb_Suppliers, listOfSuppliers, "Select Suppiler", idsVectorOfSuppliers);
+        System.out.println(idsVectorOfSuppliers);
     }
 
     /**
@@ -51,6 +61,30 @@ public class StocksForm extends javax.swing.JFrame {
 
         tab_Stocks = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tbl_Products = new javax.swing.JTable();
+        txt_SearchFieldProducts = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
+        txt_ProductName = new javax.swing.JTextField();
+        txt_ProductId = new javax.swing.JTextField();
+        txt_ProductPurchasingPrice = new javax.swing.JTextField();
+        txt_ProductSellingPrice = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        txt_ProductQuanitiyAtHand = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        cmb_Suppliers = new javax.swing.JComboBox();
+        btn_ResetProducts = new javax.swing.JButton();
+        btn_ProductsInsert = new javax.swing.JButton();
+        btn_ProductUpdate = new javax.swing.JButton();
+        btn_ProductDelete = new javax.swing.JButton();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -93,15 +127,217 @@ public class StocksForm extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        tbl_Products.setAutoCreateRowSorter(true);
+        tbl_Products.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Product Id", "Product Name", "Purchasing Price", "Selling Price", "Supplier", "Quantity at hand"
+            }
+        ));
+        tbl_Products.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_ProductsMouseClicked(evt);
+            }
+        });
+        sorterProducts = new TableRowSorter<>(tbl_Products.getModel());
+        tbl_Products.setRowSorter(sorterProducts);
+        jScrollPane5.setViewportView(tbl_Products);
+
+        jLabel12.setText("Search :");
+
+        jLabel13.setText("Product Id:");
+
+        jLabel14.setText("Product Name :");
+
+        jLabel15.setText("Purchasing Price:");
+
+        txt_ProductName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_ProductNameActionPerformed(evt);
+            }
+        });
+
+        txt_ProductId.setEditable(false);
+
+        txt_ProductPurchasingPrice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_ProductPurchasingPriceActionPerformed(evt);
+            }
+        });
+
+        txt_ProductSellingPrice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_ProductSellingPriceActionPerformed(evt);
+            }
+        });
+
+        jLabel16.setText("Selling Price:");
+
+        txt_ProductQuanitiyAtHand.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_ProductQuanitiyAtHandActionPerformed(evt);
+            }
+        });
+
+        jLabel17.setText("Quantity at hand:");
+
+        jLabel18.setText("Supplier:");
+
+        btn_ResetProducts.setText("Reset");
+        btn_ResetProducts.setToolTipText("");
+        btn_ResetProducts.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ResetProductsActionPerformed(evt);
+            }
+        });
+
+        btn_ProductsInsert.setText("Insert");
+        btn_ProductsInsert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ProductsInsertActionPerformed(evt);
+            }
+        });
+
+        btn_ProductUpdate.setText("Update");
+        btn_ProductUpdate.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ProductUpdateActionPerformed(evt);
+            }
+        });
+
+        btn_ProductDelete.setText("Delete");
+        btn_ProductDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_ProductDeleteActionPerformed(evt);
+            }
+        });
+
+        jLabel19.setForeground(java.awt.Color.red);
+        jLabel19.setText("*");
+
+        jLabel21.setForeground(java.awt.Color.red);
+        jLabel21.setText("*");
+
+        jLabel22.setForeground(java.awt.Color.red);
+        jLabel22.setText("*");
+
+        jLabel23.setForeground(java.awt.Color.red);
+        jLabel23.setText("*");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 824, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txt_SearchFieldProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 512, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel14)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel15)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jLabel21, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jLabel13)
+                                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                                        .addComponent(jLabel16)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(txt_ProductName)
+                                            .addComponent(txt_ProductPurchasingPrice)
+                                            .addComponent(txt_ProductId, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                                            .addComponent(txt_ProductSellingPrice)))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel17)
+                                            .addComponent(jLabel18))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(txt_ProductQuanitiyAtHand))
+                                            .addComponent(cmb_Suppliers, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addGap(48, 48, 48))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(btn_ProductsInsert)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(btn_ProductUpdate)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(btn_ProductDelete))
+                                    .addComponent(btn_ResetProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 96, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 546, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 589, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel12)
+                    .addComponent(txt_SearchFieldProducts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(11, 11, 11)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_ProductId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel13))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_ProductName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel14)
+                            .addComponent(jLabel19))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_ProductPurchasingPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel15)
+                            .addComponent(jLabel21))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_ProductSellingPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel16)
+                            .addComponent(jLabel22))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_ProductQuanitiyAtHand, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel17)
+                            .addComponent(jLabel23))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel18)
+                            .addComponent(cmb_Suppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(28, 28, 28)
+                        .addComponent(btn_ResetProducts)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btn_ProductsInsert)
+                            .addComponent(btn_ProductUpdate)
+                            .addComponent(btn_ProductDelete))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         tab_Stocks.addTab("Products", jPanel1);
@@ -357,7 +593,7 @@ public class StocksForm extends javax.swing.JFrame {
                                 .addComponent(btn_CustomerUpdate)
                                 .addGap(18, 18, 18)
                                 .addComponent(btn_CustomerDelete)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -695,6 +931,198 @@ public class StocksForm extends javax.swing.JFrame {
     private void txt_CustomerMobileNoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_CustomerMobileNoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txt_CustomerMobileNoActionPerformed
+
+    private void tbl_ProductsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_ProductsMouseClicked
+        // TODO add your handling code here:
+        int index = tbl_Products.getSelectedRow();
+        String productId = tbl_Products.getModel().getValueAt(tbl_Products.convertRowIndexToModel(index),0).toString();
+        showProductInFormFields(productId);
+    }//GEN-LAST:event_tbl_ProductsMouseClicked
+
+    private void txt_ProductNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_ProductNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_ProductNameActionPerformed
+
+    private void txt_ProductPurchasingPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_ProductPurchasingPriceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_ProductPurchasingPriceActionPerformed
+
+    private void txt_ProductSellingPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_ProductSellingPriceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_ProductSellingPriceActionPerformed
+
+    private void txt_ProductQuanitiyAtHandActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_ProductQuanitiyAtHandActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_ProductQuanitiyAtHandActionPerformed
+
+    private void btn_ResetProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ResetProductsActionPerformed
+         // TODO add your handling code here:
+        clearProductFormFields();
+        tbl_Products.clearSelection();
+    }//GEN-LAST:event_btn_ResetProductsActionPerformed
+
+    private void btn_ProductsInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ProductsInsertActionPerformed
+  if(txt_ProductName.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(tab_Stocks,"Please enter product Name");
+            txt_ProductName.requestFocusInWindow();
+            return;
+
+        }
+   if(txt_ProductPurchasingPrice.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(tab_Stocks,"Please enter purchasing price of product");
+            txt_ProductPurchasingPrice.requestFocusInWindow();
+            return;
+
+        }
+   if(txt_ProductQuanitiyAtHand.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(tab_Stocks,"Please enter quantity of product.");
+            txt_ProductQuanitiyAtHand.requestFocusInWindow();
+            return;
+
+        }
+  if(txt_ProductSellingPrice.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(tab_Stocks,"Please enter selling price of product.");
+            txt_ProductSellingPrice.requestFocusInWindow();
+            return;
+        }
+        
+        else
+         {
+        
+           Products product = new Products();
+           product.setProductName(txt_ProductName.getText());
+           product.setPurchasePrice(Double.parseDouble(txt_ProductPurchasingPrice.getText()));
+           product.setPrice(Double.parseDouble(txt_ProductSellingPrice.getText()));
+           product.setQuantityAtHand(Long.parseLong(txt_ProductQuanitiyAtHand.getText()));
+           Long supplierId = idsVectorOfSuppliers.get(cmb_Suppliers.getSelectedIndex()-1);        //as selected index starts from 1
+           product.setSupplierId(supplierId+"");
+           
+           StocksService service  = new StocksService();
+           if(service.insertProduct(product))
+           {
+              System.out.println("product inserted succefully : " + product.getProductName());
+              showProductsInTable();
+              JOptionPane.showMessageDialog(tab_Stocks,"Product Inserted Successfully .");
+              clearProductFormFields();
+                         
+           }
+           else
+           {
+                JOptionPane.showMessageDialog(tab_Stocks,"Product Insertion Failed.");
+                clearProductFormFields();
+           }
+           
+         }
+        
+        
+    }//GEN-LAST:event_btn_ProductsInsertActionPerformed
+
+    private void btn_ProductUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ProductUpdateActionPerformed
+         // TODO add your handling code here:
+   if(!txt_ProductId.getText().equals(""))
+      {
+        
+         if(txt_ProductName.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(tab_Stocks,"Please enter product Name");
+            txt_ProductName.requestFocusInWindow();
+            return;
+
+        }
+   if(txt_ProductPurchasingPrice.getText().equals("") || txt_ProductPurchasingPrice.getText().equals("0"))
+        {
+            JOptionPane.showMessageDialog(tab_Stocks,"Please enter valid purchasing price of product");
+            txt_ProductPurchasingPrice.requestFocusInWindow();
+            return;
+
+        }
+   if(txt_ProductQuanitiyAtHand.getText().equals(""))
+        {
+            JOptionPane.showMessageDialog(tab_Stocks,"Please enter quantity of product.");
+            txt_ProductQuanitiyAtHand.requestFocusInWindow();
+            return;
+
+        }
+  if(txt_ProductSellingPrice.getText().equals("") || txt_ProductSellingPrice.getText().equals("0"))
+        {
+            JOptionPane.showMessageDialog(tab_Stocks,"Please enter valid selling price of product.");
+            txt_ProductSellingPrice.requestFocusInWindow();
+            return;
+        }
+        
+        Double sellingPrice = Double.parseDouble(txt_ProductSellingPrice.getText());
+        Double purchasingPrice = Double.parseDouble(txt_ProductPurchasingPrice.getText());
+    if(sellingPrice<=purchasingPrice)
+    {
+        JOptionPane.showMessageDialog(tab_Stocks,"Selling price cannot be less than or equal to purchasing price.");
+        txt_ProductSellingPrice.requestFocusInWindow();
+        return;
+    }
+        
+     else
+         {
+        
+           Products product = new Products();
+           product.setProductId(Long.parseLong(txt_ProductId.getText()));
+           product.setProductName(txt_ProductName.getText());
+           product.setPrice(Double.parseDouble(txt_ProductSellingPrice.getText()));
+           product.setPurchasePrice(Double.parseDouble(txt_ProductPurchasingPrice.getText()));
+           product.setQuantityAtHand(Long.parseLong(txt_ProductQuanitiyAtHand.getText()));
+            if(cmb_Suppliers.getSelectedIndex() != 0)
+            {
+                   
+                product.setSupplierId(""+idsVectorOfSuppliers.get(cmb_Suppliers.getSelectedIndex()-1));            //extracting please select item -1
+            }
+           
+           StocksService service  = new StocksService();
+           if(service.updateProduct(product))
+           {
+              System.out.println("product updated succefully : " + product.getProductName());
+              showProductsInTable();
+              JOptionPane.showMessageDialog(tab_Stocks,"Product updated successfuly.");
+              clearProductFormFields();
+                         
+           }
+           else
+           {
+                JOptionPane.showMessageDialog(tab_Stocks,"Product updation Failed.");
+                clearProductFormFields();
+           }
+           
+         }
+      }
+    }//GEN-LAST:event_btn_ProductUpdateActionPerformed
+
+    private void btn_ProductDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_ProductDeleteActionPerformed
+        int index = tbl_Products.getSelectedRow();
+        
+        if(index >=0)
+        {
+            String productId = tbl_Products.getModel().getValueAt(tbl_Products.convertRowIndexToModel(index),0).toString();
+            showProductInFormFields(productId);
+
+            Products product = new Products();
+            product.setProductId(Long.parseLong(txt_ProductId.getText()));
+            StocksService service  = new StocksService();
+            if(service.deleteProduct(product))
+            {
+                System.out.println("product deleted succefully : " + product.getProductId());
+                showProductsInTable();
+                clearProductFormFields();
+                JOptionPane.showMessageDialog(tab_Stocks,"Product deleted Successfully .");
+
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(tab_Stocks,"Product deletion Failed.");
+                clearProductFormFields();
+            }
+        }
+    }//GEN-LAST:event_btn_ProductDeleteActionPerformed
 private void clearCustomerFormFields() {
         
                 txt_CustomerId.setText("");
@@ -712,7 +1140,7 @@ private void clearSupplierFormFields() {
                 txt_SupplierName.setText("");
                 txt_SearchField.setText("");
     }
-  public void showCustomersInTable()
+  private void showCustomersInTable()
     {
         StocksService service  = new StocksService();
         listOfCustomers = service.fetchCustomersList();
@@ -732,7 +1160,7 @@ private void clearSupplierFormFields() {
             model.addRow(row);
         }
     }
-  public void showSuppliersInTable()
+  private void showSuppliersInTable()
     {
         StocksService service  = new StocksService();
         listOfSuppliers = service.fetchSupplierList();
@@ -817,15 +1245,31 @@ private void clearSupplierFormFields() {
     private javax.swing.JButton btn_CustomerDelete;
     private javax.swing.JButton btn_CustomerInsert;
     private javax.swing.JButton btn_CustomerUpdate;
+    private javax.swing.JButton btn_ProductDelete;
+    private javax.swing.JButton btn_ProductUpdate;
+    private javax.swing.JButton btn_ProductsInsert;
     private javax.swing.JButton btn_Reset;
     private javax.swing.JButton btn_ResetCustomers;
+    private javax.swing.JButton btn_ResetProducts;
     private javax.swing.JButton btn_SupplierDelete;
     private javax.swing.JButton btn_SupplierInsert;
     private javax.swing.JButton btn_SupplierUpdate;
+    private javax.swing.JComboBox cmb_Suppliers;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -841,16 +1285,24 @@ private void clearSupplierFormFields() {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTabbedPane tab_Stocks;
     private javax.swing.JTable tbl_Customers;
+    private javax.swing.JTable tbl_Products;
     private javax.swing.JTable tbl_Suppliers;
     private javax.swing.JTextArea txt_CustomerAddress;
     private javax.swing.JTextField txt_CustomerCnic;
     private javax.swing.JTextField txt_CustomerId;
     private javax.swing.JTextField txt_CustomerMobileNo;
     private javax.swing.JTextField txt_CustomerName;
+    private javax.swing.JTextField txt_ProductId;
+    private javax.swing.JTextField txt_ProductName;
+    private javax.swing.JTextField txt_ProductPurchasingPrice;
+    private javax.swing.JTextField txt_ProductQuanitiyAtHand;
+    private javax.swing.JTextField txt_ProductSellingPrice;
     private javax.swing.JTextField txt_SearchCustomer;
     private javax.swing.JTextField txt_SearchField;
+    private javax.swing.JTextField txt_SearchFieldProducts;
     private javax.swing.JTextArea txt_SupplierAddress;
     private javax.swing.JTextField txt_SupplierId;
     private javax.swing.JTextField txt_SupplierMobileNo;
@@ -904,6 +1356,93 @@ private void clearSupplierFormFields() {
 
           
       });
+        
+        txt_SearchFieldProducts.getDocument().addDocumentListener(new DocumentListener() {
+         @Override
+         public void insertUpdate(DocumentEvent e) {
+            search(txt_SearchFieldProducts.getText());
+         }
+         @Override
+         public void removeUpdate(DocumentEvent e) {
+            search(txt_SearchFieldProducts.getText());
+         }
+         @Override
+         public void changedUpdate(DocumentEvent e) {
+            search(txt_SearchFieldProducts.getText());
+         }
+         public void search(String str) {
+            if (str.length() == 0) {
+               sorterProducts.setRowFilter(null);
+            } else {
+               sorterProducts.setRowFilter(RowFilter.regexFilter(str));
+            }
+         }
+
+          
+      });
+    }
+
+    private void showProductsInTable() {
+        StocksService service  = new StocksService();
+        listOfProducts = service.fetchProductsList();
+        DefaultTableModel model = (DefaultTableModel)tbl_Products.getModel();
+        // clear jtable content
+        model.setRowCount(0);
+        Object[] row = new Object[6];
+        for(int i = 0; i < listOfProducts.size(); i++)
+        {
+            row[0] = listOfProducts.get(i).getProductId();
+            row[1] = listOfProducts.get(i).getProductName();
+            row[2] = listOfProducts.get(i).getPurchasePrice();
+            row[3] = listOfProducts.get(i).getPrice();
+            if(!StringUtils.isNullOrEmpty(listOfProducts.get(i).getSupplierId()) && listOfSuppliers!=null && listOfSuppliers.size()>0){
+                for (Supplier supplier : listOfSuppliers) {
+                    if(supplier.getSupplierId().toString().equals(listOfProducts.get(i).getSupplierId())){
+                        row[4] = supplier.getSupplierName();
+                        break;
+                    }
+                }
+            } else{
+                row[4] = null;
+            }
+            
+            row[5] = listOfProducts.get(i).getQuantityAtHand();
+            
+            
+            model.addRow(row);
+        }
+    }
+
+    private void clearProductFormFields() {
+                txt_ProductId.setText("");
+                txt_ProductName.setText("");
+                txt_ProductPurchasingPrice.setText("");
+                txt_ProductQuanitiyAtHand.setText("");
+                txt_ProductSellingPrice.setText("");
+                cmb_Suppliers.setSelectedIndex(0);
+    }
+
+    private void showProductInFormFields(String productId) {
+        
+               
+        if(productId != null && !"".equals(productId) )
+        {
+            Products product = new Products();
+            product.setProductId(Long.parseLong(productId));
+            txt_ProductId.setText(listOfProducts.get(listOfProducts.indexOf(product)).getProductId()+ "");
+            txt_ProductName.setText(listOfProducts.get(listOfProducts.indexOf(product)).getProductName());
+            txt_ProductPurchasingPrice.setText(""+listOfProducts.get(listOfProducts.indexOf(product)).getPurchasePrice());
+            txt_ProductSellingPrice.setText(""+listOfProducts.get(listOfProducts.indexOf(product)).getPrice());
+            txt_ProductQuanitiyAtHand.setText(""+listOfProducts.get(listOfProducts.indexOf(product)).getQuantityAtHand());
+            Supplier supp = new Supplier();
+            String supplierId = listOfProducts.get(listOfProducts.indexOf(product)).getSupplierId();
+            if(supplierId!=null && !"".equals(supplierId))
+            {
+                supp.setSupplierId(Long.parseLong(supplierId));
+            }
+            
+            cmb_Suppliers.setSelectedIndex(listOfSuppliers.indexOf(supp)+1);        // as please select item is at position 0 thats why +1 is required
+        }
     }
 
   

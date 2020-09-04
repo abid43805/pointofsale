@@ -6,6 +6,7 @@
 package com.pos.forms.stocks.stocksdao;
 
 import com.pos.beans.Customer;
+import com.pos.beans.Products;
 import com.pos.beans.Supplier;
 import java.util.List;
 
@@ -28,7 +29,17 @@ public abstract class StocksDao {
     public abstract boolean deleteCustomer(Customer cust) ;
     public abstract boolean updateSupplier(Supplier supplier);    
     public abstract boolean deleteSupplier(Supplier supplier) ;
+    public abstract boolean deleteProduct(Products product) ;
 
     public abstract List<Supplier> fetchSupplier();
+
+    public abstract List<Products> fetchProducts();
+
+
+    public abstract boolean insertProduct(Products product);
+
+     /*updateProduct*/
+    public abstract boolean updateProduct(Products product);
+   
       
 }

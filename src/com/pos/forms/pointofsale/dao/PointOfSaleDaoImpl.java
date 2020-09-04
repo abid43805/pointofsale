@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,6 +32,8 @@ public class PointOfSaleDaoImpl extends PointOfSaleDao {
     private static final String SALE_ID_FETCH_QUERY = "select max(sale_id) from sales";
     private static final String SALE_INSERT_QUERY = "insert into sales (customer_id, transaction_date, amount_paid, paid_status, user_id) values (?,?,?,?,?)";
     private static final String SALE_DETAIL_INSERT_QUERY = "insert into sale_detail(sale_id, product_id, product_price, quantity, sub_total) values (?,?,?,?,?)";
+    private static final String QUANTITY_AT_HAND_QUERY = "select quantity_at_hand from products where product_id = ?";
+    private static final String UPDATE_QUANTITY_OF_PRODUCTS = "update products set quantity_at_hand = (quantity_at_hand - (select sum(quantity) from sale_detail where product_id=? and sale_id=?)) where product_id=?";
             
 
 
@@ -61,7 +64,7 @@ public class PointOfSaleDaoImpl extends PointOfSaleDao {
                 product.setProductName(rs.getString("product_name"));
                 product.setPrice(rs.getDouble("price"));
                 product.setPurchasePrice(rs.getDouble("purchase_price"));
-                product.setQuantityAtHand(rs.getDouble("quantity_at_hand"));
+                product.setQuantityAtHand(rs.getLong("quantity_at_hand"));
                 
                 System.out.println(product);
                
@@ -110,20 +113,21 @@ public class PointOfSaleDaoImpl extends PointOfSaleDao {
     }
 
     @Override
-    public boolean performSale(Sales sale) {
-        System.out.println("Commiting sale.");
+    public boolean performSale(Sales sale,  List<SaleDetail> listOfSaleDetail) throws SQLException {
+        System.out.println("Commiting sale. performSale in dao");
         Connection con = null;
         boolean result = false;
         PreparedStatement ps = null;
+        int[] batchResult = null;
         int count = 1;
         Long saleId = 0L;
         int rs ; 
         
         try {
-           con = DBUtils.getConnection();
+            con = DBUtils.getConnection();
             ps = con.prepareStatement(SALE_INSERT_QUERY);
            //customer_id, transaction_date, amount_paid, paid_status, user_id, arrear_amount_to_be_paid
-            ps.setLong(count++, sale.getCustomer().getCustomerId());
+            ps.setLong(count++, sale.getCustomer()!=null?sale.getCustomer().getCustomerId():0);
             Timestamp date = new Timestamp(new Date().getTime());
             ps.setTimestamp(count++, date);
             ps.setDouble(count++, sale.getAmountPaid());    
@@ -133,19 +137,50 @@ public class PointOfSaleDaoImpl extends PointOfSaleDao {
             rs = ps.executeUpdate();
             if (rs > 0)
             {
-                System.out.println("sale insert successfull : now ready to insert saledetail");
-                
-                result = true;
+                    System.out.println("sale insert successfull : now ready to insert saledetail");
+                    ps = con.prepareStatement(SALE_DETAIL_INSERT_QUERY);
+                    for (SaleDetail saleDetail: listOfSaleDetail) {
+                        count = 1;
+                        ps.setLong(count++, saleDetail.getSale());      // sale id will be generated on run time in future for multiusers
+                        ps.setLong(count++, saleDetail.getProduct());
+                        ps.setDouble(count++, saleDetail.getProductPrice());
+                        ps.setLong(count++, saleDetail.getQuantity());
+                        ps.setDouble(count++, saleDetail.getSubTotal());
+
+                        ps.addBatch();
+                 }
+
+                 batchResult = ps.executeBatch();
+                 if(batchResult.length>0){
+                     
+                     //update products set quantity_at_hand = (quantity_at_hand - (select sum(quantity) from sale_detail where product_id='5' and sale_id='43')) where product_id='5';
+                      
+                     
+                     ps = con.prepareStatement(UPDATE_QUANTITY_OF_PRODUCTS);
+                    //update products set quantity_at_hand = (quantity_at_hand - (select sum(quantity) from sale_detail where product_id=? and sale_id='?')) where product_id=?
+                     count=1;
+                    for (SaleDetail saleDetail: listOfSaleDetail) {
+                        
+                        count = 1;
+                        ps.setLong(count++, saleDetail.getProduct());
+                        ps.setString(count++, saleDetail.getSale()+"");      // sale id will be generated on run time in future for multiusers
+                        ps.setLong(count++, saleDetail.getProduct());
+
+                        ps.addBatch();
+                    }
+
+                      batchResult = ps.executeBatch();
+                      if(batchResult.length>0){
+                        result = true;
+                      }
+                 }
             }
             else {
-                
                 System.out.println("sale insert failure...");
                 result = false;
-
-              
             }
-
-        
+        } catch(SQLException sqlEx){
+            throw new SQLException("Exception occured while commiting sale", sqlEx);
         } catch (Exception ex) {
             Logger logger = Logger. getAnonymousLogger();
             try {
@@ -211,5 +246,33 @@ public class PointOfSaleDaoImpl extends PointOfSaleDao {
         return batchResult;
             
     }
-    
+    public Long fetchQuantityAtHand(Products product)
+    {
+        System.out.println("fetchQuantityAtHand against product id : " + product.getProductId());
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int count = 1;
+        Long quantityAtHand = 0L;
+        
+        try {
+        
+            
+            con = DBUtils.getConnection();
+            ps = con.prepareStatement(QUANTITY_AT_HAND_QUERY);
+            ps.setString(1, product.getProductId()+"");
+            rs = ps.executeQuery();
+            if (rs.next()) // found
+            {
+               quantityAtHand = rs.getLong(1);
+            }
+        } catch (Exception ex) {
+            System.out.println("Error in fetchQuantityAtHand -->" + ex);
+           } finally {
+            DBUtils.close(con);
+            DBUtils.closePreparedStmnt(ps);
+            DBUtils.closeResultSet(rs);
+        }
+        return quantityAtHand;
+    }
 }

@@ -1,9 +1,14 @@
 package com.pos.beans;
 
+import java.util.Objects;
+
 
 
 
 public class SaleDetail {
+
+    public SaleDetail() {
+    }
 
     public SaleDetail(Long sale, Long product, Double productPrice, Long quantity, Double subTotal) {
         this.sale = sale;
@@ -12,6 +17,8 @@ public class SaleDetail {
         this.quantity = quantity;
         this.subTotal = subTotal;
     }
+
+    
 
   
 
@@ -72,5 +79,31 @@ public class SaleDetail {
 
     public void setProduct(Long product) {
         this.product = product;
+    }
+    
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.sale);
+        hash = 67 * hash + Objects.hashCode(this.product);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final SaleDetail other = (SaleDetail) obj;
+        if (!Objects.equals(this.sale, other.sale)) {
+            return false;
+        }
+        if (!Objects.equals(this.product, other.product)) {
+            return false;
+        }
+        return true;
     }
 }

@@ -7,6 +7,7 @@ package com.pos.utils;
 
 import com.pos.beans.Customer;
 import com.pos.beans.Products;
+import com.pos.beans.Supplier;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -77,12 +78,21 @@ public class DBUtils {
          {
             idsVector.add(((Products)obj).getProductId());
                 
-          }
+         }
          if(obj instanceof Customer)
          {
-             idsVector.add(((Customer)obj).getCustomerId());
+             if(((Customer)obj).getCustomerName().equals("Walk In Customer")) {
+                idsVector.add(0, ((Customer)obj).getCustomerId());  // 0 for walk in customer   
+             }
+             else{
+                idsVector.add(((Customer)obj).getCustomerId());
+             }
          }
-  }
+         if(obj instanceof Supplier)
+         {
+             idsVector.add(((Supplier)obj).getSupplierId());
+         }
+    }
 
   }
     public static void resetJTable(JTable jTable)

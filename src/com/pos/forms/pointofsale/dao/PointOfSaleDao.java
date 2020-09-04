@@ -8,6 +8,7 @@ package com.pos.forms.pointofsale.dao;
 import com.pos.beans.Products;
 import com.pos.beans.SaleDetail;
 import com.pos.beans.Sales;
+import java.sql.SQLException;
 import java.util.List;
 
 /**
@@ -19,8 +20,8 @@ public abstract List<Products> fetchProductsList();
 
 public abstract Long calculateSaleId() ;
 
-public abstract boolean performSale(Sales sale);
+public abstract boolean performSale(Sales sale, List<SaleDetail> listOfSaleDetail) throws SQLException;
 public abstract int[] performSaleDetailInsert(Sales sale,List<SaleDetail> listOfSaleDetail);
 
-    
+public abstract Long fetchQuantityAtHand(Products product);
 }
