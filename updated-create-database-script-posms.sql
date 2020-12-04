@@ -82,3 +82,4 @@ ALTER TABLE sales ADD COLUMN arrear_amount_to_be_paid int;
 alter table products add column purchase_price decimal;
 
 ALTER TABLE products ADD COLUMN barcode  varchar(48);
+ALTER TABLE products ADD CONSTRAINT barcode_unique_contraint UNIQUE (barcode);
