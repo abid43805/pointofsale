@@ -13,6 +13,15 @@ public class Products {
 	private Double purchasePrice;
 	private Long quantityAtHand;
 	private String supplierId;
+        private String barCode;
+
+    public String getBarCode() {
+        return barCode;
+    }
+
+    public void setBarCode(String barCode) {
+        this.barCode = barCode;
+    }
 
 	
 	public Long getProductId() {

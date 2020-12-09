@@ -123,6 +123,11 @@ public class StocksService {
         return suppUpdated;    
     
     }
+
+    public Products findBarcodeProduct(String barCode) {
+        StocksDao stocksDao = new StokcsDaoImpl();
+        return stocksDao.findBarcodeProduct(barCode);
+    }
    
     
     

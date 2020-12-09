@@ -24,4 +24,6 @@ public abstract boolean performSale(Sales sale, List<SaleDetail> listOfSaleDetai
 public abstract int[] performSaleDetailInsert(Sales sale,List<SaleDetail> listOfSaleDetail);
 
 public abstract Long fetchQuantityAtHand(Products product);
+
+public abstract List<SaleDetail> fetchSaleDetails(String saleId) ;
 }

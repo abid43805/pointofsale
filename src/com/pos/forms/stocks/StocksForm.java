@@ -85,6 +85,8 @@ public class StocksForm extends javax.swing.JFrame {
         jLabel21 = new javax.swing.JLabel();
         jLabel22 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
+        txt_BarCodeField = new javax.swing.JTextField();
+        jLabel20 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
@@ -133,7 +135,7 @@ public class StocksForm extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Product Id", "Product Name", "Purchasing Price", "Selling Price", "Supplier", "Quantity at hand"
+                "Product Id", "Product Name", "Purchasing Price", "Selling Price", "Supplier", "Quantity at hand", "Barcode"
             }
         ));
         tbl_Products.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -226,6 +228,8 @@ public class StocksForm extends javax.swing.JFrame {
         jLabel23.setForeground(java.awt.Color.red);
         jLabel23.setText("*");
 
+        jLabel20.setText("Bar Code:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -268,14 +272,16 @@ public class StocksForm extends javax.swing.JFrame {
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel17)
-                                            .addComponent(jLabel18))
+                                            .addComponent(jLabel18)
+                                            .addComponent(jLabel20))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addGroup(jPanel1Layout.createSequentialGroup()
                                                 .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(txt_ProductQuanitiyAtHand))
-                                            .addComponent(cmb_Suppliers, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                            .addComponent(cmb_Suppliers, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(txt_BarCodeField))))
                                 .addGap(48, 48, 48))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -329,7 +335,11 @@ public class StocksForm extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel18)
                             .addComponent(cmb_Suppliers, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(28, 28, 28)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txt_BarCodeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel20))
+                        .addGap(13, 13, 13)
                         .addComponent(btn_ResetProducts)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -339,6 +349,8 @@ public class StocksForm extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
+
+        jLabel20.getAccessibleContext().setAccessibleName("Bar Code:");
 
         tab_Stocks.addTab("Products", jPanel1);
 
@@ -1000,7 +1012,7 @@ public class StocksForm extends javax.swing.JFrame {
            product.setQuantityAtHand(Long.parseLong(txt_ProductQuanitiyAtHand.getText()));
            Long supplierId = idsVectorOfSuppliers.get(cmb_Suppliers.getSelectedIndex()-1);        //as selected index starts from 1
            product.setSupplierId(supplierId+"");
-           
+           product.setBarCode(txt_BarCodeField.getText());
            StocksService service  = new StocksService();
            if(service.insertProduct(product))
            {
@@ -1074,10 +1086,10 @@ public class StocksForm extends javax.swing.JFrame {
            product.setQuantityAtHand(Long.parseLong(txt_ProductQuanitiyAtHand.getText()));
             if(cmb_Suppliers.getSelectedIndex() != 0)
             {
-                   
+
                 product.setSupplierId(""+idsVectorOfSuppliers.get(cmb_Suppliers.getSelectedIndex()-1));            //extracting please select item -1
             }
-           
+           product.setBarCode(txt_BarCodeField.getText());           
            StocksService service  = new StocksService();
            if(service.updateProduct(product))
            {
@@ -1267,6 +1279,7 @@ private void clearSupplierFormFields() {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
@@ -1290,6 +1303,7 @@ private void clearSupplierFormFields() {
     private javax.swing.JTable tbl_Customers;
     private javax.swing.JTable tbl_Products;
     private javax.swing.JTable tbl_Suppliers;
+    private javax.swing.JTextField txt_BarCodeField;
     private javax.swing.JTextArea txt_CustomerAddress;
     private javax.swing.JTextField txt_CustomerCnic;
     private javax.swing.JTextField txt_CustomerId;
@@ -1388,7 +1402,7 @@ private void clearSupplierFormFields() {
         DefaultTableModel model = (DefaultTableModel)tbl_Products.getModel();
         // clear jtable content
         model.setRowCount(0);
-        Object[] row = new Object[6];
+        Object[] row = new Object[7];
         for(int i = 0; i < listOfProducts.size(); i++)
         {
             row[0] = listOfProducts.get(i).getProductId();
@@ -1407,6 +1421,7 @@ private void clearSupplierFormFields() {
             }
             
             row[5] = listOfProducts.get(i).getQuantityAtHand();
+            row[6] = listOfProducts.get(i).getBarCode();
             
             
             model.addRow(row);
@@ -1420,6 +1435,7 @@ private void clearSupplierFormFields() {
                 txt_ProductQuanitiyAtHand.setText("");
                 txt_ProductSellingPrice.setText("");
                 cmb_Suppliers.setSelectedIndex(0);
+                txt_BarCodeField.setText("");
     }
 
     private void showProductInFormFields(String productId) {
@@ -1442,6 +1458,13 @@ private void clearSupplierFormFields() {
             }
             
             cmb_Suppliers.setSelectedIndex(listOfSuppliers.indexOf(supp)+1);        // as please select item is at position 0 thats why +1 is required
+            if(listOfProducts.get(listOfProducts.indexOf(product)).getBarCode()!=null)
+            {
+                txt_BarCodeField.setText(listOfProducts.get(listOfProducts.indexOf(product)).getBarCode());
+            }
+            else{
+                txt_BarCodeField.setText("");
+            }
         }
     }
 

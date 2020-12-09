@@ -6,6 +6,7 @@
 package com.pos.forms.pointofsale.service;
 
 import com.pos.beans.Products;
+import com.pos.beans.SaleDetail;
 import com.pos.beans.Sales;
 import com.pos.forms.pointofsale.dao.PointOfSaleDao;
 import com.pos.forms.pointofsale.dao.PointOfSaleDaoImpl;
@@ -62,6 +63,12 @@ public class PointOfSaleService {
        }
      return saleDetailResult;
       
+    }
+
+    public List<SaleDetail> fetchSaleDetails(String saleId) {
+
+        PointOfSaleDao posDao = new PointOfSaleDaoImpl();
+        return posDao.fetchSaleDetails(saleId);
     }
 
   

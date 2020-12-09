@@ -12,15 +12,23 @@ import com.pos.beans.Sales;
 import com.pos.forms.loginform.LoginForm;
 import com.pos.forms.pointofsale.service.PointOfSaleService;
 import com.pos.forms.stocks.stocksservice.StocksService;
+import com.pos.utils.AbstractActionImpl;
+import com.pos.utils.ButtonColumn;
 import com.pos.utils.DBUtils;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.BasisLibrary;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -48,7 +56,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         txt_SaleId.setText(""+(posService.calculateSaleId()+1));
         DBUtils.addItemsToCombo(cmb_Products, listOfProducts, "Select Product", idsVectorOfProducts);
         DBUtils.addItemsToCombo(cmb_Customer, listOfCustomers, "Walk In Customer", idsVectorOfCustomers);
-        
+        txt_BarCodeField.requestFocus();
        
         
     }
@@ -79,6 +87,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         lbl_RemainingQuantity = new javax.swing.JLabel();
         btn_ClearCart = new javax.swing.JButton();
+        txt_BarCodeField = new javax.swing.JTextField();
         pnl_PaymentPanel = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
@@ -114,14 +123,14 @@ public class PointOfSaleForm extends javax.swing.JFrame {
             }
         });
 
-        txt_Quantity.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_QuantityActionPerformed(evt);
-            }
-        });
         txt_Quantity.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 txt_QuantityFocusLost(evt);
+            }
+        });
+        txt_Quantity.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_QuantityActionPerformed(evt);
             }
         });
 
@@ -144,6 +153,17 @@ public class PointOfSaleForm extends javax.swing.JFrame {
             }
         });
 
+        txt_BarCodeField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_BarCodeFieldActionPerformed(evt);
+            }
+        });
+        txt_BarCodeField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txt_BarCodeFieldKeyPressed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnl_SalePanelLayout = new javax.swing.GroupLayout(pnl_SalePanel);
         pnl_SalePanel.setLayout(pnl_SalePanelLayout);
         pnl_SalePanelLayout.setHorizontalGroup(
@@ -163,8 +183,9 @@ public class PointOfSaleForm extends javax.swing.JFrame {
                     .addComponent(txt_Price)
                     .addComponent(txt_SaleId)
                     .addComponent(txt_SubTotal)
-                    .addComponent(cmb_Products, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cmb_Customer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cmb_Products, 0, 134, Short.MAX_VALUE)
+                    .addComponent(cmb_Customer, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txt_BarCodeField))
                 .addGroup(pnl_SalePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnl_SalePanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
@@ -192,11 +213,13 @@ public class PointOfSaleForm extends javax.swing.JFrame {
                         .addGroup(pnl_SalePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txt_SaleId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2))
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnl_SalePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cmb_Products, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_BarCodeField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cmb_Products, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                         .addGroup(pnl_SalePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnl_SalePanelLayout.createSequentialGroup()
                                 .addGroup(pnl_SalePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -217,7 +240,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
                             .addGroup(pnl_SalePanelLayout.createSequentialGroup()
                                 .addGap(88, 88, 88)
                                 .addComponent(jLabel6)))
-                        .addGap(15, 35, Short.MAX_VALUE))
+                        .addGap(15, 28, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnl_SalePanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addGroup(pnl_SalePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -304,9 +327,19 @@ public class PointOfSaleForm extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Sale ID", "Product ID", "Product Name", "Price", "Quantity", "Sub Total"
+                "Sale ID", "Product ID", "Product Name", "Price", "Quantity", "Subtotal", "Action"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                true, true, true, true, true, true, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tbl_SaleDetail.setRowSelectionAllowed(false);
+        tbl_SaleDetail.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbl_SaleDetail.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbl_SaleDetailMouseClicked(evt);
@@ -365,7 +398,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel)tbl_SaleDetail.getModel();
         // clear jtable content
        
-        Object[] row = new Object[6];
+        Object[] row = new Object[7];
         
             row[0] = txt_SaleId.getText();
              
@@ -401,6 +434,16 @@ public class PointOfSaleForm extends javax.swing.JFrame {
             Long productId = idsVectorOfProducts.get(cmb_Products.getSelectedIndex()-1);        //as selected index starts from 1
             row[1] = productId;
             
+            
+            row[6] = "Delete";
+            
+            
+            Action delete = new AbstractActionImpl(this.listOfSaleDetail);
+ 
+            ButtonColumn buttonColumn = new ButtonColumn(tbl_SaleDetail, delete, 6);
+            buttonColumn.setMnemonic(KeyEvent.VK_DELETE);
+            
+            
             model.addRow(row);            
             Double price = Double.parseDouble(txt_Price.getText());
             Long quantity = Long.parseLong(txt_Quantity.getText());
@@ -415,13 +458,13 @@ public class PointOfSaleForm extends javax.swing.JFrame {
             }
             else
             {
-//               this.listOfSaleDetail.remove(indexOfSaleDetailExisting);
+//             this.listOfSaleDetail.remove(indexOfSaleDetailExisting);
                removeSaleDetailFromCart(saleDetail);
-               this.listOfSaleDetail.add(indexOfSaleDetailExisting, saleDetail);
+               this.listOfSaleDetail.add(saleDetail);
             }
             
-            Double amountDue = txt_AmountDue.getText().equals("")?0:Double.parseDouble(txt_AmountDue.getText()) ;
-            txt_AmountDue.setText((amountDue + Double.parseDouble(txt_SubTotal.getText()))+"");
+            calculateAmountDue();
+            
               
             
             
@@ -487,7 +530,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
             txt_SubTotal.setText("");
             PointOfSaleService service =  new PointOfSaleService();
             Long quantityAtHand = service.fetchQuantityAtHand(selectedProduct);
-            Long remainingQuantity = quantityAtHand - 0;    //as quantity is no entered yet
+            Long remainingQuantity = quantityAtHand - 0;    //as quantity is not entered yet
             if(remainingQuantity>=0){
                 lbl_RemainingQuantity.setText(remainingQuantity+"");
                 btn_AddToDetail.setEnabled(true);
@@ -509,37 +552,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         // TODO add your handling code here:
  // TODO add your handling code here:
        
-       if(!txt_Quantity.getText().isEmpty())
-       {
-        Long quantity = Long.parseLong(txt_Quantity.getText());
-        Double price = Double.parseDouble(txt_Price.getText());
-        txt_SubTotal.setText((quantity * price)+"");    
-        PointOfSaleService service =  new PointOfSaleService();
-         int index = cmb_Products.getSelectedIndex()-1;  //leave first item title 
-        if (index != -1 && listOfProducts.size() > 0) {
-            Products selectedProduct = listOfProducts.get(index);
-            if (null != selectedProduct) {
-                Long quantityAtHand = service.fetchQuantityAtHand(selectedProduct);
-                Long orderedQuantity = Long.parseLong(txt_Quantity.getText()!=""?txt_Quantity.getText():"0");
-                Long remainingQuantity = quantityAtHand - orderedQuantity;
-                if(remainingQuantity>=0){
-                    lbl_RemainingQuantity.setText(remainingQuantity+"");
-                    btn_AddToDetail.setEnabled(true);
-                }
-                else{
-                    lbl_RemainingQuantity.setText("Product out of stock");
-                    btn_AddToDetail.setEnabled(false);
-                }
-                
-            }
-        }
-        else
-        {
-            txt_SubTotal.setText("0");
-        }
-       
-       
-       }  
+        calculateRemainingQuantity();
     }//GEN-LAST:event_txt_QuantityFocusLost
 
     private void txt_AmountPaidFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txt_AmountPaidFocusLost
@@ -562,6 +575,34 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         String productId = tbl_SaleDetail.getModel().getValueAt(tbl_SaleDetail.convertRowIndexToModel(index),1).toString();
         showProductInFormFields(saleId, productId);
     }//GEN-LAST:event_tbl_SaleDetailMouseClicked
+
+    private void txt_BarCodeFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_BarCodeFieldKeyPressed
+        if(evt.getKeyCode()==KeyEvent.VK_ENTER)
+        {
+//            cmb_ProductsActionPerformed
+            //search product barcode in db
+            StocksService stockService = new StocksService();
+            Products product = stockService.findBarcodeProduct(txt_BarCodeField.getText());
+            long quantityInCart = 1;
+            //select product in combo
+            if(product!=null && !"".equals(product.getProductId()))
+            {
+               cmb_Products.setSelectedIndex(listOfProducts.indexOf(product)+1);        // as please select item is at position 0 thats why +1 is required
+               quantityInCart = calculateQuantityOfProductInCart(product.getProductId());
+            }
+            txt_Quantity.setText(quantityInCart+"");
+            calculateRemainingQuantity();
+            btn_AddToDetail.doClick();
+            txt_BarCodeField.setText("");
+            txt_BarCodeField.requestFocus();            
+            //JOptionPane.showMessageDialog(pnl_SaleDetailPanel,"Product bar code. + " + txt_BarCodeField.getText());
+            
+        }
+    }//GEN-LAST:event_txt_BarCodeFieldKeyPressed
+
+    private void txt_BarCodeFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_BarCodeFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_BarCodeFieldActionPerformed
 
     /**
      * @param args the command line arguments
@@ -623,6 +664,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
     private javax.swing.JTextField txt_AmountChange;
     private javax.swing.JTextField txt_AmountDue;
     private javax.swing.JTextField txt_AmountPaid;
+    private javax.swing.JTextField txt_BarCodeField;
     private javax.swing.JTextField txt_Price;
     private javax.swing.JTextField txt_Quantity;
     private javax.swing.JTextField txt_SaleId;
@@ -653,6 +695,8 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         listOfSaleDetail.clear();
         DBUtils.resetJTable(tbl_SaleDetail);
         btn_SaleCommit.setEnabled(false);
+        txt_BarCodeField.setText("");
+        txt_BarCodeField.requestFocus();
     }
 
     private void calculateChangeAmount() {
@@ -683,5 +727,66 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         DefaultTableModel model = (DefaultTableModel)tbl_SaleDetail.getModel();
         model.removeRow(listOfSaleDetail.indexOf(saleDetail));
         this.listOfSaleDetail.remove(listOfSaleDetail.get(listOfSaleDetail.indexOf(saleDetail)));   //remove from cart and sent for updation
+    }
+
+    private void calculateRemainingQuantity() {
+
+      if(!txt_Quantity.getText().isEmpty())
+       {
+        Long quantity = Long.parseLong(txt_Quantity.getText());
+        Double price = Double.parseDouble(txt_Price.getText());
+        txt_SubTotal.setText((quantity * price)+"");    
+        PointOfSaleService service =  new PointOfSaleService();
+         int index = cmb_Products.getSelectedIndex()-1;  //leave first item title 
+        if (index != -1 && listOfProducts.size() > 0) {
+            Products selectedProduct = listOfProducts.get(index);
+            if (null != selectedProduct) {
+                Long quantityAtHand = service.fetchQuantityAtHand(selectedProduct);
+                Long orderedQuantity = Long.parseLong(txt_Quantity.getText()!=""?txt_Quantity.getText():"0");
+                Long remainingQuantity = quantityAtHand - orderedQuantity;
+                if(remainingQuantity>=0){
+                    lbl_RemainingQuantity.setText(remainingQuantity+"");
+                    btn_AddToDetail.setEnabled(true);
+                }
+                else{
+                    lbl_RemainingQuantity.setText("Product out of stock");
+                    btn_AddToDetail.setEnabled(false);
+                }
+                
+            }
+        }
+        else
+        {
+            txt_SubTotal.setText("0");
+        }
+       
+       
+       }  
+    }
+
+    private long calculateQuantityOfProductInCart(Long productIdFromBarCode) {
+        long quantity = 1;
+        if(listOfSaleDetail!=null && listOfSaleDetail.size()>0){
+            for (SaleDetail itemInCart : listOfSaleDetail) {
+                
+                if(itemInCart.getProduct().equals(productIdFromBarCode)){
+                   quantity= itemInCart.getQuantity() + 1;
+                }
+                
+            }
+        }
+        return quantity;
+    }
+
+    private void calculateAmountDue() {
+        double amountDue = 0;
+        if(listOfSaleDetail!=null && listOfSaleDetail.size()>0){
+            for (SaleDetail itemInCart : listOfSaleDetail) {
+                amountDue+= itemInCart.getSubTotal();
+                
+            }
+            
+        }
+        txt_AmountDue.setText(amountDue +"");
     }
 }

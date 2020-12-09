@@ -29,7 +29,17 @@ public class SaleDetail {
 	private Double productPrice; // product_price int(11)
 	private Long quantity; // quantity int(11)
 	private Double subTotal; // sub_total int(11)
+        private String productName;
 
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    
 
 	public Long getSaleDetailId() {
 		return saleDetailId;

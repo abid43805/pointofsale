@@ -5,6 +5,13 @@
  */
 package com.pos.forms.salereturn;
 
+import com.pos.beans.SaleDetail;
+import com.pos.forms.pointofsale.service.PointOfSaleService;
+import com.pos.forms.stocks.stocksservice.StocksService;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author AbidAli
@@ -33,6 +40,7 @@ public class SaleReturnForm extends javax.swing.JFrame {
         btn_Search = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_SaleReturn = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -56,16 +64,30 @@ public class SaleReturnForm extends javax.swing.JFrame {
 
         tbl_SaleReturn.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "Transaction ID", "Product Name", "Price", "Quantity", "Subtotal"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, true, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(tbl_SaleReturn);
+
+        jButton1.setBackground(new java.awt.Color(255, 255, 255));
+        jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jButton1.setLabel("Return");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnl_SaleReturnLayout = new javax.swing.GroupLayout(pnl_SaleReturn);
         pnl_SaleReturn.setLayout(pnl_SaleReturnLayout);
@@ -79,6 +101,8 @@ public class SaleReturnForm extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(txt_Transaction, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(pnl_SaleReturnLayout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
@@ -92,7 +116,9 @@ public class SaleReturnForm extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(txt_Transaction, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(btn_Search, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(pnl_SaleReturnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_Search, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -123,9 +149,43 @@ public class SaleReturnForm extends javax.swing.JFrame {
     }//GEN-LAST:event_txt_TransactionActionPerformed
 
     private void btn_SearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SearchActionPerformed
-        // TODO add your handling code here:
+        
+        if(txt_Transaction.getText()!=null || txt_Transaction.getText()!="")
+        {
+            PointOfSaleService posService = new PointOfSaleService();
+            List<SaleDetail> listSaleDetail = posService.fetchSaleDetails(txt_Transaction.getText());
+            if(listSaleDetail!=null && listSaleDetail.size()>0){
+                showSaleDetailInTable(listSaleDetail);
+            }
+            
+        }
+        
     }//GEN-LAST:event_btn_SearchActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+private void showSaleDetailInTable(List<SaleDetail> listSaleDetail)
+    {
+        DefaultTableModel model = (DefaultTableModel)tbl_SaleReturn.getModel();
+        // clear jtable content
+        model.setRowCount(0);
+        Object[] row = new Object[5];
+        for(int i = 0; i < listSaleDetail.size(); i++)
+        {
+            row[0] = listSaleDetail.get(i).getSale();
+            row[1] = listSaleDetail.get(i).getProductName();
+            row[2] = listSaleDetail.get(i).getProductPrice();
+            row[3] = listSaleDetail.get(i).getQuantity();
+            row[4] = listSaleDetail.get(i).getSubTotal();
+            
+            
+            model.addRow(row);
+        }
+    }
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -163,6 +223,7 @@ public class SaleReturnForm extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_Search;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pnl_SaleReturn;

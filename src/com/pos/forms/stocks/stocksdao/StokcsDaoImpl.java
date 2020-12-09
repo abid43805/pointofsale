@@ -24,17 +24,19 @@ public class StokcsDaoImpl extends StocksDao{
 
     private static final String CUSTOMER_INSERT_QUERY =  "INSERT INTO customers(customer_name, customer_mobile_no, customer_cnic, customer_address) values(?,?,?,?)";
     private static final String SUPPLIER_INSERT_QUERY =  "INSERT INTO suppliers(sup_name, sup_contact_number, sup_address) values(?,?,?)";
-    private static final String PRODUCT_INSERT_QUERY =   "INSERT INTO products(product_name, price, quantity_at_hand, purchase_price, supplier_id) values(?,?,?,?,?)";
+    private static final String PRODUCT_INSERT_QUERY =   "INSERT INTO products(product_name, price, quantity_at_hand, purchase_price, supplier_id, barcode) values(?,?,?,?,?,?)";
     
     private static final String CUSTOMER_FETCH_QUERY = "select * from customers";
     private static final String SUPPLIERS_FETCH_QUERY = "select * from suppliers";
     private static final String PRODUCTS_FETCH_QUERY = "select * from products";
     private static final String CUSTOMER_UPDATE_QUERY = "update customers set customer_name = ?, customer_mobile_no = ?, customer_cnic = ?, customer_address = ? where customer_id = ?";
     private static final String SUPPLIER_UPDATE_QUERY = "update suppliers set sup_name=?, sup_contact_number=?, sup_address =? where sup_id = ?";
-    private static final String PRODUCT_UPDATE_QUERY = "update products set product_name=?, price=?, quantity_at_hand=?, purchase_price=?, supplier_id=? where product_id = ?";
+    private static final String PRODUCT_UPDATE_QUERY = "update products set product_name=?, price=?, quantity_at_hand=?, purchase_price=?, supplier_id=?, barcode=? where product_id = ?";
     private static final String CUSTOMER_DELETE_QUERY = "DELETE FROM customers WHERE customer_id = ?";
     private static final String SUPPLIER_DELETE_QUERY = "DELETE FROM suppliers WHERE sup_id = ?";
     private static final String PRODUCT_DELETE_QUERY = "DELETE FROM products WHERE product_id = ?";
+    private static final String PRODUCTS_FETCH_THROUGH_BARCODE_QUERY = "select * from products where barcode=?";
+    
     @Override
     public boolean insertCustomer(Customer customer) {
         Connection con = null;
@@ -196,7 +198,7 @@ public class StokcsDaoImpl extends StocksDao{
                 product.setQuantityAtHand(rs.getLong("quantity_at_hand"));
                 product.setSupplierId(rs.getString("supplier_id"));
                 product.setPurchasePrice(rs.getDouble("purchase_price"));
-                
+                product.setBarCode(rs.getString("barcode"));
                 
                        
                 listOfProducts.add(product);
@@ -375,6 +377,7 @@ public class StokcsDaoImpl extends StocksDao{
             ps.setString(count++, ""+product.getQuantityAtHand());
             ps.setString(count++, ""+product.getPurchasePrice());
             ps.setString(count++, product.getSupplierId());
+            ps.setString(count++, product.getBarCode());
   
             rs = ps.executeUpdate();
             if (rs > 0) // found
@@ -411,13 +414,14 @@ public class StokcsDaoImpl extends StocksDao{
             
             con = DBUtils.getConnection();
             ps = con.prepareStatement(PRODUCT_UPDATE_QUERY);
-            //"update products set product_name=?, price=?, quantity_at_hand=?, purchase_price=?, supplier_id=? where product_id = ?";
+            //"update products set product_name=?, price=?, quantity_at_hand=?, purchase_price=?, supplier_id=?, barcode=? where product_id = ?";
             ps.setString(count++, product.getProductName());
             ps.setDouble(count++, product.getPrice());
-            
             ps.setLong(count++, product.getQuantityAtHand());
             ps.setDouble(count++, product.getPurchasePrice());
             ps.setString(count++, product.getSupplierId());
+            ps.setString(count++, product.getBarCode());
+            
             ps.setLong(count++, product.getProductId());
             rs = ps.executeUpdate();
             if (rs > 0) // updated
@@ -433,5 +437,39 @@ public class StokcsDaoImpl extends StocksDao{
             }
         return customerUpdated;
     
+    }
+
+    @Override
+    public Products findBarcodeProduct(String barCode) {
+
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int count = 1;
+        Products product = null;
+        try {
+            con = DBUtils.getConnection();
+            ps = con.prepareStatement(PRODUCTS_FETCH_THROUGH_BARCODE_QUERY);
+            ps.setString(count++, barCode);
+            rs = ps.executeQuery();
+            while (rs.next()) // found
+            {
+                product = new Products();
+                product.setProductId(rs.getLong("product_id"));
+                product.setProductName(rs.getString("product_name"));
+                product.setPrice(rs.getDouble("price"));
+                product.setQuantityAtHand(rs.getLong("quantity_at_hand"));
+                product.setSupplierId(rs.getString("supplier_id"));
+                product.setPurchasePrice(rs.getDouble("purchase_price"));
+            }
+        } catch (Exception ex) {
+            System.out.println("Error in fetching product through barcode -->" + ex);
+           } finally {
+            DBUtils.closeResultSet(rs);
+            DBUtils.closePreparedStmnt(ps);
+            DBUtils.close(con);
+        }
+        return product;
+        
     }
 }

@@ -40,6 +40,8 @@ public abstract class StocksDao {
 
      /*updateProduct*/
     public abstract boolean updateProduct(Products product);
+
+    public abstract Products findBarcodeProduct(String barCode);
    
       
 }

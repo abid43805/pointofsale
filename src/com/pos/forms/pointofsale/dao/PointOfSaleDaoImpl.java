@@ -34,6 +34,7 @@ public class PointOfSaleDaoImpl extends PointOfSaleDao {
     private static final String SALE_DETAIL_INSERT_QUERY = "insert into sale_detail(sale_id, product_id, product_price, quantity, sub_total) values (?,?,?,?,?)";
     private static final String QUANTITY_AT_HAND_QUERY = "select quantity_at_hand from products where product_id = ?";
     private static final String UPDATE_QUANTITY_OF_PRODUCTS = "update products set quantity_at_hand = (quantity_at_hand - (select sum(quantity) from sale_detail where product_id=? and sale_id=?)) where product_id=?";
+    private static final String FETCH_SALE_DETAILS = "select * from sale_detail sd, products p where sd.product_id =p.product_id and sd.sale_id=?";
             
 
 
@@ -274,5 +275,47 @@ public class PointOfSaleDaoImpl extends PointOfSaleDao {
             DBUtils.closeResultSet(rs);
         }
         return quantityAtHand;
+    }
+
+    @Override
+    public  List<SaleDetail> fetchSaleDetails(String saleId) {
+        
+    System.out.println("fetching SaleDetails list.");
+        Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        int count = 1;
+        SaleDetail saleDetail;
+        List<SaleDetail> listOfSaleDetails = null;
+        try {
+            listOfSaleDetails = new ArrayList<SaleDetail>();
+            con = DBUtils.getConnection();
+            ps = con.prepareStatement(FETCH_SALE_DETAILS);
+            ps.setString(count++, saleId);
+            rs = ps.executeQuery();
+            while (rs.next()) // found
+            {
+                saleDetail = new SaleDetail();
+                
+                saleDetail.setSale(rs.getLong("sale_id"));
+                saleDetail.setProduct(rs.getLong("product_id"));
+                saleDetail.setProductName(rs.getString("product_name"));
+                saleDetail.setProductPrice(rs.getDouble("product_price"));
+                saleDetail.setQuantity(rs.getLong("quantity"));
+                saleDetail.setSubTotal(rs.getDouble("sub_total"));
+                
+                System.out.println(saleDetail);
+               
+                
+                listOfSaleDetails.add(saleDetail);
+            }
+        } catch (Exception ex) {
+            System.out.println("Error in fetching SaleDetails -->" + ex);
+           } finally {
+            DBUtils.closeResultSet(rs);
+            DBUtils.closePreparedStmnt(ps);
+            DBUtils.close(con);
+        }
+        return listOfSaleDetails;
     }
 }
