@@ -70,6 +70,15 @@ public class PointOfSaleService {
         PointOfSaleDao posDao = new PointOfSaleDaoImpl();
         return posDao.fetchSaleDetails(saleId);
     }
+  public boolean updateSaleReturns(List<SaleDetail> listOfSaleDetail) {
 
+        PointOfSaleDao posDao = new PointOfSaleDaoImpl();
+        try {
+            return posDao.prcessSaleReturns(listOfSaleDetail);
+        } catch (SQLException ex) {
+            Logger.getLogger(PointOfSaleService.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
   
 }

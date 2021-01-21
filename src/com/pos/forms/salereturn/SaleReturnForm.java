@@ -8,7 +8,13 @@ package com.pos.forms.salereturn;
 import com.pos.beans.SaleDetail;
 import com.pos.forms.pointofsale.service.PointOfSaleService;
 import com.pos.forms.stocks.stocksservice.StocksService;
+import com.pos.utils.TableCellListener;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -23,6 +29,7 @@ public class SaleReturnForm extends javax.swing.JFrame {
      */
     public SaleReturnForm() {
         initComponents();
+        registerEventonCellEditor();
     }
 
     /**
@@ -40,7 +47,7 @@ public class SaleReturnForm extends javax.swing.JFrame {
         btn_Search = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tbl_SaleReturn = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        btn_SaleReturn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -80,12 +87,13 @@ public class SaleReturnForm extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tbl_SaleReturn);
 
-        jButton1.setBackground(new java.awt.Color(255, 255, 255));
-        jButton1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jButton1.setLabel("Return");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btn_SaleReturn.setBackground(new java.awt.Color(255, 255, 255));
+        btn_SaleReturn.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        btn_SaleReturn.setBorder(new javax.swing.border.MatteBorder(null));
+        btn_SaleReturn.setLabel("Return");
+        btn_SaleReturn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btn_SaleReturnActionPerformed(evt);
             }
         });
 
@@ -102,7 +110,7 @@ public class SaleReturnForm extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(txt_Transaction, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btn_SaleReturn, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(pnl_SaleReturnLayout.createSequentialGroup()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 656, Short.MAX_VALUE)
@@ -117,7 +125,7 @@ public class SaleReturnForm extends javax.swing.JFrame {
                     .addComponent(txt_Transaction, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnl_SaleReturnLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btn_SaleReturn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btn_Search, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -162,10 +170,27 @@ public class SaleReturnForm extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btn_SearchActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btn_SaleReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_SaleReturnActionPerformed
+        ArrayList<String> jTableUpdatedValues = new ArrayList<String>(); 
+        Vector tableData = ((DefaultTableModel)tbl_SaleReturn.getModel()).getDataVector();
+        System.out.println(tableData);
+        List<SaleDetail> listToBeReturned = makeListToBeReturned(tableData);
+        PointOfSaleService service = new PointOfSaleService();
+        boolean saleReturned = service.updateSaleReturns(listToBeReturned);
+        if (saleReturned) {
+            JOptionPane.showMessageDialog(pnl_SaleReturn, "Product(s) returned successfully.");
+        } else {
+            JOptionPane.showMessageDialog(pnl_SaleReturn, "Some problem occurred while returning product(s).");
+        }
+         
+//        for (int count = 0; count <= tbl_SaleReturn.getModel().getRowCount(); count++) {
+//            jTableUpdatedValues.add(tbl_SaleReturn.getModel().getValueAt(count, 0).toString());
+//        }
+//        System.out.println(jTableUpdatedValues);
+
         
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btn_SaleReturnActionPerformed
 private void showSaleDetailInTable(List<SaleDetail> listSaleDetail)
     {
         DefaultTableModel model = (DefaultTableModel)tbl_SaleReturn.getModel();
@@ -179,6 +204,7 @@ private void showSaleDetailInTable(List<SaleDetail> listSaleDetail)
             row[2] = listSaleDetail.get(i).getProductPrice();
             row[3] = listSaleDetail.get(i).getQuantity();
             row[4] = listSaleDetail.get(i).getSubTotal();
+            
             
             
             model.addRow(row);
@@ -222,12 +248,54 @@ private void showSaleDetailInTable(List<SaleDetail> listSaleDetail)
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_SaleReturn;
     private javax.swing.JButton btn_Search;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pnl_SaleReturn;
     private javax.swing.JTable tbl_SaleReturn;
     private javax.swing.JTextField txt_Transaction;
     // End of variables declaration//GEN-END:variables
+
+    private void registerEventonCellEditor() {
+        
+        Action action = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                TableCellListener tcl = (TableCellListener) e.getSource();
+                DefaultTableModel defaultTableModel = (DefaultTableModel)tbl_SaleReturn.getModel();
+                System.out.println("Row   : " + tcl.getRow());
+                System.out.println("Column: " + tcl.getColumn());
+                System.out.println("Old   : " + tcl.getOldValue());
+                System.out.println("New   : " + tcl.getNewValue());
+                if(Long.parseLong(tcl.getNewValue().toString())>Long.parseLong(tcl.getOldValue().toString())){
+                    JOptionPane.showMessageDialog(pnl_SaleReturn,"Quantity returned can not be greater than old quantity.");
+                    tbl_SaleReturn.getModel().setValueAt(tcl.getOldValue(), tcl.getRow(), tcl.getColumn());
+                    return;
+                }   
+                Vector dataVector = defaultTableModel.getDataVector();
+                String price = dataVector.get(tcl.getRow()).toString().split(",")[2];
+                String newSubTotal;  //new quantity * price
+                newSubTotal = "" + Long.parseLong(tcl.getNewValue().toString())*Double.parseDouble(price);
+                System.out.println(dataVector.get(tcl.getRow()) + " 2nd element in vector" + price);
+                System.out.println("newSubTotal : " + newSubTotal);
+                //assign new subtotal to relevant column in table
+                tbl_SaleReturn.getModel().setValueAt(newSubTotal, tcl.getRow(), 4);
+            }
+        };
+        TableCellListener tcl = new TableCellListener(tbl_SaleReturn, action);
+        
+        
+    }
+
+    private List<SaleDetail> makeListToBeReturned(Vector tableData) {
+            List<SaleDetail> list =  new ArrayList<SaleDetail>();
+            SaleDetail saleDetail;
+            String[] tableDataArray = tableData.toString().split(",");
+            for(int i = 0; i < tableData.size(); i++){
+                saleDetail = new SaleDetail();
+                saleDetail.setProduct((tableData.get(i)));
+                
+            }
+        return null;
+    }
 }

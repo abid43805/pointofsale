@@ -26,4 +26,6 @@ public abstract int[] performSaleDetailInsert(Sales sale,List<SaleDetail> listOf
 public abstract Long fetchQuantityAtHand(Products product);
 
 public abstract List<SaleDetail> fetchSaleDetails(String saleId) ;
+
+public abstract boolean prcessSaleReturns(List<SaleDetail> listOfSaleDetail)  throws SQLException;
 }

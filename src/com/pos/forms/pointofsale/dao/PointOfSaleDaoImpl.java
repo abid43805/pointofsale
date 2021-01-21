@@ -35,6 +35,9 @@ public class PointOfSaleDaoImpl extends PointOfSaleDao {
     private static final String QUANTITY_AT_HAND_QUERY = "select quantity_at_hand from products where product_id = ?";
     private static final String UPDATE_QUANTITY_OF_PRODUCTS = "update products set quantity_at_hand = (quantity_at_hand - (select sum(quantity) from sale_detail where product_id=? and sale_id=?)) where product_id=?";
     private static final String FETCH_SALE_DETAILS = "select * from sale_detail sd, products p where sd.product_id =p.product_id and sd.sale_id=?";
+    private static final String UPDATE_QUANTITY_IN_PRODUCTS = "update products set quantity_at_hand=? where product_id = ?;";
+    private static final String SALE_DETAIL_UPDATE_QUERY = "update sale_detail set quantity=?, sub_total=? where sale_detail_id = ?";
+    private static final String UPDATE_SALE_TOTAL_AMOUNT = "update sales set amount_paid =? where sale_id = ?";
             
 
 
@@ -317,5 +320,87 @@ public class PointOfSaleDaoImpl extends PointOfSaleDao {
             DBUtils.close(con);
         }
         return listOfSaleDetails;
+    }
+
+    @Override
+    public boolean prcessSaleReturns(List<SaleDetail> listOfSaleDetail) throws SQLException {
+
+        System.out.println("updating sale/quantity of products/saledetails. prcessSaleReturns in dao");
+        Connection con = null;
+        boolean result = false;
+        PreparedStatement ps = null;
+        int[] batchResult = null;
+        int count = 1;
+        int rs;
+
+        try {
+            con = DBUtils.getConnection();
+            con.setAutoCommit(false);
+            Double updatedSaleSum = 0.0;
+            if (listOfSaleDetail.size() > 0) {
+                
+                System.out.println("product quantity updated successfull : now ready to update in saledetail");
+                for (SaleDetail saleDetail : listOfSaleDetail) {
+                    count = 1;
+                    ps = con.prepareStatement(UPDATE_QUANTITY_IN_PRODUCTS);
+                    //update products set quantity_at_hand=? where product_id = ?;
+                    ps.setLong(count++, saleDetail.getQuantity());
+                    ps.setLong(count++, saleDetail.getProduct());
+
+                    rs = ps.executeUpdate();
+
+                    if(rs > 0){
+                        //update sale_detail set quantity=?, sub_total=? where sale_detail_id = ?
+                        ps = con.prepareStatement(SALE_DETAIL_UPDATE_QUERY);
+
+                        ps.setLong(count++, saleDetail.getQuantity());
+                        ps.setDouble(count++, saleDetail.getSubTotal());
+                        ps.setLong(count++, saleDetail.getSaleDetailId());
+
+                        ps.addBatch();
+                    }
+                    
+                    
+                    updatedSaleSum = updatedSaleSum + saleDetail.getSubTotal();
+                    
+                    
+                    
+                }
+                batchResult = ps.executeBatch();
+                if (batchResult.length > 0) {
+                    //update sales set amount_paid =? where sale_id = ?;
+                    ps = con.prepareStatement(UPDATE_SALE_TOTAL_AMOUNT);
+                    count = 1;
+                    if (batchResult.length > 0) {
+                        result = true;
+                    }
+               else {
+                System.out.println("sale insert failure...");
+                result = false;
+            }
+                }
+            } 
+        } catch (SQLException sqlEx) {
+            throw new SQLException("Exception occured while commiting sale", sqlEx);
+        } catch (Exception ex) {
+            Logger logger = Logger.getAnonymousLogger();
+            try {
+                logger.addHandler(new FileHandler("D:/posErrorFile.txt"));
+                logger.log(Level.SEVERE, ex.getMessage());
+
+            } catch (IOException ex1) {
+                Logger.getLogger(PointOfSaleDaoImpl.class.getName()).log(Level.SEVERE, null, ex1);
+            } catch (SecurityException ex1) {
+                Logger.getLogger(PointOfSaleDaoImpl.class.getName()).log(Level.SEVERE, null, ex1);
+            }
+
+            System.out.print("Error in inserting sale -->");
+            ex.printStackTrace();
+        } finally {
+            DBUtils.close(con);
+            DBUtils.closePreparedStmnt(ps);
+
+        }
+        return result;
     }
 }
