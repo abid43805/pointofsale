@@ -13,11 +13,14 @@ import com.pos.forms.loginform.LoginForm;
 import com.pos.forms.pointofsale.service.PointOfSaleService;
 import com.pos.forms.stocks.stocksservice.StocksService;
 import com.pos.utils.AbstractActionImpl;
+import com.pos.utils.BillPrintable;
 import com.pos.utils.ButtonColumn;
 import com.pos.utils.DBUtils;
 import com.sun.org.apache.xalan.internal.xsltc.runtime.BasisLibrary;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -70,6 +73,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        bill_system1 = new bill_system.Bill_system();
         pnl_SalePanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -262,14 +266,14 @@ public class PointOfSaleForm extends javax.swing.JFrame {
 
         txt_AmountChange.setEditable(false);
 
-        txt_AmountPaid.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_AmountPaidActionPerformed(evt);
-            }
-        });
         txt_AmountPaid.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 txt_AmountPaidFocusLost(evt);
+            }
+        });
+        txt_AmountPaid.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_AmountPaidActionPerformed(evt);
             }
         });
 
@@ -296,7 +300,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
                     .addComponent(txt_AmountChange, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
                     .addComponent(txt_AmountDue)
                     .addComponent(txt_AmountPaid))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 121, Short.MAX_VALUE)
                 .addComponent(btn_SaleCommit)
                 .addContainerGap())
         );
@@ -507,8 +511,9 @@ public class PointOfSaleForm extends javax.swing.JFrame {
         if(result)
         {
             txt_SaleId.setText(""+(posService.calculateSaleId()+1));
-            clearCart();
             JOptionPane.showMessageDialog(pnl_SaleDetailPanel,"Sale commited successfully.");
+            printBill();
+            clearCart();
         }
         else
         {
@@ -640,6 +645,7 @@ public class PointOfSaleForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private bill_system.Bill_system bill_system1;
     private javax.swing.JButton btn_AddToDetail;
     private javax.swing.JButton btn_ClearCart;
     private javax.swing.JButton btn_SaleCommit;
@@ -788,5 +794,23 @@ public class PointOfSaleForm extends javax.swing.JFrame {
             
         }
         txt_AmountDue.setText(amountDue +"");
+    }
+
+    private void printBill() {
+         PrinterJob pj = PrinterJob.getPrinterJob();        
+         BillPrintable billPrintable = new BillPrintable();
+         billPrintable.txttotalAmount = txt_AmountDue.getText();
+         billPrintable.txtcash = txt_AmountPaid.getText();
+         billPrintable.txtbalance = txt_AmountChange.getText();
+         billPrintable.setListOfSaleDetail(listOfSaleDetail);
+         billPrintable.setListOfProducts(listOfProducts);
+        pj.setPrintable(billPrintable,billPrintable.getPageFormat(pj));
+        try {
+             pj.print();
+          
+        }
+         catch (PrinterException ex) {
+                 ex.printStackTrace();
+        }
     }
 }

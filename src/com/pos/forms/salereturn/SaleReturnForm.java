@@ -293,7 +293,7 @@ private void showSaleDetailInTable(List<SaleDetail> listSaleDetail)
             String[] tableDataArray = tableData.toString().split(",");
             for(int i = 0; i < tableData.size(); i++){
                 saleDetail = new SaleDetail();
-                saleDetail.setProduct((tableData.get(i)));
+                saleDetail.setProduct((Long) (tableData.get(i)));
                 
             }
         return null;
